@@ -34,7 +34,7 @@ export async function getProfile(locale: string, id: string): Promise<MongoProfi
 }
 
 export async function getProfileWithNameAndID(locale: string): Promise<{ _id: ObjectId, name: string }[]> {
-  
+
   return await getCollection()
     .find({locale: locale})
     .project({ _id: 1, name: 1 })
@@ -47,7 +47,7 @@ export async function getProfiles(): Promise<MongoProfile[]> {
     const profiles = await getCollection().find({}).toArray();
         return profiles as MongoProfile[];
     }
-    
+
 
 // TODO #2 Change to fetching from Mongo
 export async function getProfile(index: number): Promise<MongoProfile> {
