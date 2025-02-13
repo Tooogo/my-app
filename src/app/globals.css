@@ -28,6 +28,6 @@ nav {
   justify-content: flex-end;
 }
 
-nav > a {
+nav>a {
   margin-left: 8px;
 }

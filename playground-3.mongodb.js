@@ -14,7 +14,7 @@ db.getCollection('COLLECTION_TEST1').insertOne({
     "club": 'ロケット制作サークル、軽音部',
     "part_time_job": '医療器具制作会社のお手伝い、JAXA展示室説明員',
 
-    "self_introduction":[
+    "self_introduction": [
         { id: "1", type: "h1", content: "Why I love Sauna" },
         { id: "2", type: "h2", content: "Relieves fatigue by improving oxygen intake" },
         { id: "3", type: "h3", content: "Sauna bathing increases blood flow nearly twice as much as at rest. As a result, oxygen intake increases, muscle fatigue substances are secreted, physical fatigue is recovered, energy is reproduced, and the effect of fatigue recovery is enhanced." },
@@ -35,7 +35,7 @@ db.getCollection('COLLECTION_TEST1').insertOne({
     "club": 'ロケット制作サークル、軽音部',
     "part_time_job": '医療器具制作会社のお手伝い、JAXA展示室説明員',
 
-    "self_introduction":[
+    "self_introduction": [
         { id: "1", type: "h1", content: "Why I love Sauna" },
         { id: "2", type: "h2", content: "Relieves fatigue by improving oxygen intake" },
         { id: "3", type: "h3", content: "Sauna bathing increases blood flow nearly twice as much as at rest. As a result, oxygen intake increases, muscle fatigue substances are secreted, physical fatigue is recovered, energy is reproduced, and the effect of fatigue recovery is enhanced." },
@@ -56,7 +56,7 @@ db.getCollection('COLLECTION_TEST1').insertOne({
     "club": 'ロケット制作サークル、軽音部',
     "part_time_job": '医療器具制作会社のお手伝い、JAXA展示室説明員',
 
-    "self_introduction":[
+    "self_introduction": [
         { id: "1", type: "h1", content: "Why I love Sauna" },
         { id: "2", type: "h2", content: "Relieves fatigue by improving oxygen intake" },
         { id: "3", type: "h3", content: "Sauna bathing increases blood flow nearly twice as much as at rest. As a result, oxygen intake increases, muscle fatigue substances are secreted, physical fatigue is recovered, energy is reproduced, and the effect of fatigue recovery is enhanced." },
@@ -77,7 +77,7 @@ db.getCollection('COLLECTION_TEST1').insertOne({
     "club": 'ロケット制作サークル、軽音部',
     "part_time_job": '医療器具制作会社のお手伝い、JAXA展示室説明員',
 
-    "self_introduction":[
+    "self_introduction": [
         { id: "1", type: "h1", content: "Why I love Sauna" },
         { id: "2", type: "h2", content: "Relieves fatigue by improving oxygen intake" },
         { id: "3", type: "h3", content: "Sauna bathing increases blood flow nearly twice as much as at rest. As a result, oxygen intake increases, muscle fatigue substances are secreted, physical fatigue is recovered, energy is reproduced, and the effect of fatigue recovery is enhanced." },

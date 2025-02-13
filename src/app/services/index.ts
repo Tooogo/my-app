@@ -1,23 +1,23 @@
-import { promises } from "dns";
-import { routing } from "../../i18n/routing"
-import { useLocale, useTranslations } from 'next-intl';
+// import { promises } from "dns";
+// import { routing } from "../../i18n/routing"
+// import { useLocale, useTranslations } from 'next-intl';
 import client from "../../lib/mongodb";
-import {MongoProfile} from "./type"
+import { MongoProfile } from "./type"
 const DATABASE = "DATABASE_TEST1"
 const COLLECTION = "COLLECTION_TEST1"
-import { Collection, Db, ObjectId } from 'mongodb'
+// import { Collection, Db, ObjectId } from 'mongodb'
 
 function getDatabase() {
-    return client.db(DATABASE);
+  return client.db(DATABASE);
 }
 
 function getCollection() {
-    return getDatabase().collection<MongoProfile>(COLLECTION);
+  return getDatabase().collection<MongoProfile>(COLLECTION);
 }
 
 // locale に応じたプロフィールを取得する関数
 export async function getProfiles(locale: string): Promise<MongoProfile[]> {
-    return await getCollection().find({ locale }).toArray() as MongoProfile[];
+  return await getCollection().find({ locale }).toArray() as MongoProfile[];
 }
 
 export async function getProfileById(id: string): Promise<MongoProfile> {
@@ -28,15 +28,15 @@ export async function getProfileById(id: string): Promise<MongoProfile> {
 
 // locale に応じた1件のプロフィールを取得する関数
 export async function getProfile(locale: string, id: string): Promise<MongoProfile | null> {
-    const profiles = await getProfiles(locale);  // profilesの取得
-    console.log(profiles)
-    return profiles.find(profile => profile._id === id) || null;  // _idで検索して一致するものを返す
+  const profiles = await getProfiles(locale);  // profilesの取得
+  console.log(profiles)
+  return profiles.find(profile => profile._id === id) || null;  // _idで検索して一致するものを返す
 }
 
 export async function getProfileWithNameAndID(locale: string): Promise<{ _id: ObjectId, name: string }[]> {
 
   return await getCollection()
-    .find({locale: locale})
+    .find({ locale: locale })
     .project({ _id: 1, name: 1 })
     .toArray() as { _id: ObjectId, name: string }[];
 }

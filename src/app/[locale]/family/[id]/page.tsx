@@ -2,12 +2,12 @@
 // 'use client';
 
 import Image from "next/image";
-import { useLocale } from 'next-intl';
+// import { useLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server'
 // import { useRouter } from 'next/router';
-import { getProfileById} from "@/app/services";
-import { use } from 'react';
-import { GetServerSideProps } from 'next';
+import { getProfileById } from "@/app/services";
+// import { use } from 'react';
+// import { GetServerSideProps } from 'next';
 
 const headerFormatting = (block: string, h2Count: number): string => {
   switch (block) {
@@ -35,9 +35,9 @@ const textStyling = (block: string): string => {
 
 // TODO #5 Fetch data from mongodb for specific user & specific lang https://nextjs.org/docs/app/api-reference/functions/use-params
 export default async function FamilyMember({ params }: {
-  params: { id: string , locale: string}
+  params: { id: string }
 }) {
-  const { id, locale } = await params
+  const { id } = await params
   const t = await getTranslations('Home');
 
   //const locale = useLocale();

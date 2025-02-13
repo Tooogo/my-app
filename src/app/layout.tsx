@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 // import { useTranslation } from 'next-i18next';
-import Link from 'next/link'
-import {NextIntlClientProvider, useMessages} from 'next-intl';
+// import Link from 'next/link'
+import { NextIntlClientProvider, useMessages } from 'next-intl';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 
 export default function RootLayout({
-  children, params: {locale}
+  children, params: { locale }
 }: Readonly<{
   children: React.ReactNode;
 }>) {

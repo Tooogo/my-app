@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 // import { useTranslation } from 'next-i18next';
-import { NextIntlClientProvider, useLocale, useMessages } from 'next-intl';
+// import { NextIntlClientProvider, useLocale, useMessages } from 'next-intl';
 import Link from 'next/link'
 // import { useTranslation } from "react-i18next";
 import { getProfiles } from "../services";
 
+/*
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -17,6 +18,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+*/
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -27,12 +29,12 @@ export const metadata: Metadata = {
 
 
 export default async function RootLayout({
-    children,
-    params 
-  }: { 
-    children: React.ReactNode;
-  params: { locale: string }; 
-  }) {
+  children,
+  params
+}: {
+  children: React.ReactNode;
+  params: { locale: string };
+}) {
   const { locale } = await params;
   const profiles = await getProfiles(locale); // サーバーで直接データ取得
 
