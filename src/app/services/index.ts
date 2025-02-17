@@ -5,7 +5,7 @@ import client from "../../lib/mongodb";
 import { MongoProfile } from "./type"
 const DATABASE = "DATABASE_TEST1"
 const COLLECTION = "COLLECTION_TEST1"
-// import { Collection, Db, ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 function getDatabase() {
   return client.db(DATABASE);
@@ -24,17 +24,14 @@ export async function getProfileById(id: string): Promise<MongoProfile> {
   return await getCollection().findOne({ _id: new ObjectId(id) }) as MongoProfile;
 }
 
-
-
 // locale に応じた1件のプロフィールを取得する関数
 export async function getProfile(locale: string, id: string): Promise<MongoProfile | null> {
   const profiles = await getProfiles(locale);  // profilesの取得
   console.log(profiles)
-  return profiles.find(profile => profile._id === id) || null;  // _idで検索して一致するものを返す
+  return profiles.find(profile => profile._id.toString() === id) || null;  // _idで検索して一致するものを返す
 }
 
 export async function getProfileWithNameAndID(locale: string): Promise<{ _id: ObjectId, name: string }[]> {
-
   return await getCollection()
     .find({ locale: locale })
     .project({ _id: 1, name: 1 })
@@ -67,8 +64,6 @@ export function getProfiles_eng() {
 }
 */
 
-
-
 /*
 // Function to get profiles based on locale from params
 export function getProfile(index: number) {
@@ -82,7 +77,6 @@ export function getProfile(index: number) {
       throw new Error("Unsupported locale");
     }
   }
-
 
   // Example usage
   export function getProfiles(

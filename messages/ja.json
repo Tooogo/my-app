@@ -1,18 +1,17 @@
 {
-    "Home":{
-      "profileNotFound": "お探しされてるプロファイルがございません",
-      "SUBTITLE": "test",
-      "selfIntroduction": "Self Introduction",
-      "name": "Name",
-      "hobby": "Hobby",
-      "area": "Places I've lived",
-      "club": "Club",
-      "partTimeJob": "Part-time Job",
-      "MainTopic": "Why I love Sauna",
-      "Reason1": "Relieves fatigue by improving oxygen intake",
-      "Reason1_1": "Sauna bathing increases blood flow nearly twice as much as at rest. As a result, oxygen intake increases, muscle fatigue substances are secreted, physical fatigue is recovered, energy is reproduced, and the effect of fatigue recovery is enhanced.",
-      "Reason2": "It's time to face your body",
-      "Reason2_2": "More and more people are having difficulty understanding their senses, called alexithymia. Instead of setting the time by looking at the clock or entering at the time told by others, you can regain the sense of being in touch with yourself by judging by your heart rate."
-    }
+  "Home": {
+    "profileNotFound": "お探しされてるプロファイルがございません",
+    "SUBTITLE": "test",
+    "selfIntroduction": "Self Introduction",
+    "name": "Name",
+    "hobby": "Hobby",
+    "area": "Places I've lived",
+    "club": "Club",
+    "partTimeJob": "Part-time Job",
+    "MainTopic": "Why I love Sauna",
+    "Reason1": "Relieves fatigue by improving oxygen intake",
+    "Reason1_1": "Sauna bathing increases blood flow nearly twice as much as at rest. As a result, oxygen intake increases, muscle fatigue substances are secreted, physical fatigue is recovered, energy is reproduced, and the effect of fatigue recovery is enhanced.",
+    "Reason2": "It's time to face your body",
+    "Reason2_2": "More and more people are having difficulty understanding their senses, called alexithymia. Instead of setting the time by looking at the clock or entering at the time told by others, you can regain the sense of being in touch with yourself by judging by your heart rate."
   }
-  
+}
