@@ -6,7 +6,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm"  # 例: Node.js（package.json）
-    directory: "/"  # ルートディレクトリ
+  - package-ecosystem: "npm"  # Node.js 用の package.json
+    directory: "/"  # package.json のあるディレクトリ
     schedule:
       interval: "daily"  # 毎日チェック
