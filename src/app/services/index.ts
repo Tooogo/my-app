@@ -38,6 +38,22 @@ export async function getProfileWithNameAndID(locale: string): Promise<{ _id: Ob
     .toArray() as { _id: ObjectId, name: string }[];
 }
 
+
+export async function WritingDataToMongoDB(data: FormData): Promise<{ insertedId: string }> {
+  const name = data.get('name')?.toString() || '';
+  const locale = data.get('locale')?.toString() || '';
+  const hobby = data.get('hobby')?.toString() || '';
+  const area = data.get('area')?.toString() || '';
+  const club = data.get('club')?.toString() || '';
+  const part_time_job = data.get('part_time_job')?.toString() || '';
+
+  const collection = await getCollection();
+  const result = await collection.insertOne({ name, locale, hobby, area, club, part_time_job });
+
+  return { insertedId: result.insertedId.toString() };
+}
+
+
 /*
 // TODO #3 refactor to shared db service
 export async function getProfiles(): Promise<MongoProfile[]> {

@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-// import { Inter } from 'next/font/google';
-// import { useTranslation } from 'next-i18next';
-// import { NextIntlClientProvider, useLocale, useMessages } from 'next-intl';
 import Link from 'next/link'
-// import { useTranslation } from "react-i18next";
 import { getProfiles } from "../services";
+import { Inter } from 'next/font/google'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 /*
 const geistSans = Geist({
@@ -19,6 +16,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 */
+const inter = Inter({ subsets: ['latin'] })
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,12 +31,12 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = params; // 修正: awaitを削除
+  const { locale } = await params; // 修正: awaitを削除
   const profiles = await getProfiles(locale); // サーバーで直接データ取得
 
   return (
     <html lang={locale}>
-      <body>
+      <body className={inter.className}>
         <nav>
           <Link key="home" href="/">Home</Link>
           {profiles.map((profile, index) => (
