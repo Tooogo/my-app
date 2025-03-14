@@ -54,6 +54,22 @@ export async function WritingDataToMongoDB(data: FormData): Promise<{ insertedId
 }
 
 
+
+export async function updateUserInMongoDB(id: string, data: FormData): Promise<{ modifiedCount: number }> {
+  const collection = getCollection();
+  const updateData = {
+    name: data.get('name')?.toString() || '',
+    locale: data.get('locale')?.toString() || '',
+    hobby: data.get('hobby')?.toString() || '',
+    area: data.get('area')?.toString() || '',
+    club: data.get('club')?.toString() || '',
+    part_time_job: data.get('part_time_job')?.toString() || '',
+  };
+
+  const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData });
+  return { modifiedCount: result.modifiedCount };
+}
+
 /*
 // TODO #3 refactor to shared db service
 export async function getProfiles(): Promise<MongoProfile[]> {
