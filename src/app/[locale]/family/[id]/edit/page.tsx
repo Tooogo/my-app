@@ -3,7 +3,7 @@ import UserForm from '../../../../components/UserForm';
 import { getProfileById } from '@/app/services';
 
 export default async function HomePage({ params }: { params: { id: string } }) {
-  const { id } = params;
+  const { id } =  params;
   const profile = await getProfileById(id);
   if (!profile) {
     return <div>Profile not found</div>;
