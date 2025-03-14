@@ -2,12 +2,10 @@
 // 'use client';
 
 import Image from "next/image";
-// import { useLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server'
-// import { useRouter } from 'next/router';
 import { getProfileById } from "@/app/services";
-// import { use } from 'react';
-// import { GetServerSideProps } from 'next';
+import Link from "next/link";
+
 
 const headerFormatting = (block: string, h2Count: number): string => {
   switch (block) {
@@ -88,6 +86,14 @@ export default async function FamilyMember({ params }: {
             })}
 
         </ol>
+
+        <Link
+          href={`./edit`}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Edit
+        </Link>
+
       </main>
       <div className="flex gap-4 items-center flex-col sm:flex-row">
         <a
