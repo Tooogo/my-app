@@ -1,18 +1,31 @@
 'use client';
 
-import { useState } from 'react';
-import { registerUser } from '../actions/userActions';
+import { useState, useEffect } from 'react';
+import { registerUser, updateUser } from '../actions/userActions';
 
-export default function UserForm() {
+export default function UserForm({ data }: { data?: any }) {
+  const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [locale, setLocale] = useState('en');
   const [hobby, setHobby] = useState('');
   const [area, setArea] = useState('');
   const [club, setClub] = useState('');
   const [part_time_job, setPart_time_job] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (event) => {
+  useEffect(() => {
+    if (data) {
+      setId(data._id || '');
+      setName(data.name || '');
+      setLocale(data.locale || 'en');
+      setHobby(data.hobby || '');
+      setArea(data.area || '');
+      setClub(data.club || '');
+      setPart_time_job(data.part_time_job || '');
+    }
+  }, [data]);
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
 
@@ -25,8 +38,13 @@ export default function UserForm() {
     formData.append('part_time_job', part_time_job);
 
     try {
-      await registerUser(formData);
-      alert('User registered successfully');
+      if (id) {
+        await updateUser(id, formData);
+        alert('User updated successfully');
+      } else {
+        await registerUser(formData);
+        alert('User registered successfully');
+      }
       setName('');
       setLocale('en');
       setHobby('');
@@ -34,14 +52,14 @@ export default function UserForm() {
       setClub('');
       setPart_time_job('');
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
   return (
     <div className="container mt-5">
       <div className="card shadow p-4">
-        <h2 className="text-center mb-4">User Registration</h2>
+        <h2 className="text-center mb-4">{id ? 'Edit Profile' : 'User Registration'}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="name" className="form-label">Name:</label>
@@ -112,7 +130,7 @@ export default function UserForm() {
             />
           </div>
           {error && <p className="text-danger">{error}</p>}
-          <button type="submit" className="btn btn-primary w-100">Register</button>
+          <button type="submit" className="btn btn-primary w-100">{id ? 'Update' : 'Register'}</button>
         </form>
       </div>
     </div>

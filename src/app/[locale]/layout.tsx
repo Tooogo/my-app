@@ -31,19 +31,26 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = await params; // 修正: awaitを削除
+  const { locale } = params;
   const profiles = await getProfiles(locale); // サーバーで直接データ取得
 
   return (
     <html lang={locale}>
       <body className={inter.className}>
-        <nav>
-          <Link key="home" href="/">Home</Link>
-          {profiles.map((profile, index) => (
-            <Link key={index} href={`/${locale}/family/${profile._id}`}>
-              {profile.name}
-            </Link>
-          ))}
+        <nav className="d-flex justify-content-between align-items-center p-3 bg-light">
+          <div>
+            <Link key="home" href="/" className="me-3">Home</Link>
+            {profiles.map((profile, index) => (
+              <Link key={index} href={`/${locale}/family/${profile._id}`} className="me-3">
+                {profile.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* Registration ボタンを追加 */}
+          <Link href={`/${locale}/submit`}>
+            <button className="btn btn-primary">Registration</button>
+          </Link>
         </nav>
         {children}
       </body>
