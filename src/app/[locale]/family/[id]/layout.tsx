@@ -50,26 +50,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-/*
-export default function RootLayout({
-  children, params: {locale}
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const messages = useMessages();
-
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-
-      </body>
-    </html>
-  );
-}
-*/

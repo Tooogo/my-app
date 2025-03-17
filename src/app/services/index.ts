@@ -39,13 +39,8 @@ export async function getProfileWithNameAndID(locale: string): Promise<{ _id: Ob
 }
 
 
-export async function WritingDataToMongoDB(data: FormData): Promise<{ insertedId: string }> {
-  const name = data.get('name')?.toString() || '';
-  const locale = data.get('locale')?.toString() || '';
-  const hobby = data.get('hobby')?.toString() || '';
-  const area = data.get('area')?.toString() || '';
-  const club = data.get('club')?.toString() || '';
-  const part_time_job = data.get('part_time_job')?.toString() || '';
+export async function WritingDataToMongoDB(data: MongoProfile): Promise<{ insertedId: string }> {
+  const { name, locale, hobby, area, club, part_time_job } = data;
 
   const collection = await getCollection();
   const result = await collection.insertOne({ name, locale, hobby, area, club, part_time_job });
@@ -53,69 +48,19 @@ export async function WritingDataToMongoDB(data: FormData): Promise<{ insertedId
   return { insertedId: result.insertedId.toString() };
 }
 
+export async function updateUserInMongoDB(id: string, data: MongoProfile): Promise<{ modifiedCount: number }> {
+  const { name, locale, hobby, area, club, part_time_job } = data;
 
-
-export async function updateUserInMongoDB(id: string, data: FormData): Promise<{ modifiedCount: number }> {
-  const collection = getCollection();
+  const collection = await getCollection();
   const updateData = {
-    name: data.get('name')?.toString() || '',
-    locale: data.get('locale')?.toString() || '',
-    hobby: data.get('hobby')?.toString() || '',
-    area: data.get('area')?.toString() || '',
-    club: data.get('club')?.toString() || '',
-    part_time_job: data.get('part_time_job')?.toString() || '',
+    name: name,
+    locale: locale,
+    hobby: hobby,
+    area: area,
+    club: club,
+    part_time_job: part_time_job,
   };
 
   const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData });
   return { modifiedCount: result.modifiedCount };
 }
-
-/*
-// TODO #3 refactor to shared db service
-export async function getProfiles(): Promise<MongoProfile[]> {
-    const profiles = await getCollection().find({}).toArray();
-        return profiles as MongoProfile[];
-    }
-
-
-// TODO #2 Change to fetching from Mongo
-export async function getProfile(index: number): Promise<MongoProfile> {
-    const profiles = await getProfiles();
-    return profiles[index];
-}
-
-getProfiles().then((profiles) => console.log(profiles)).catch(console.error);
-
-// TODO #4 How to support multiple languages?
-export function getProfile_eng(index: number) {
-    return profiles_eng[index];
-}
-
-export function getProfiles_eng() {
-    return profiles_eng;
-}
-*/
-
-/*
-// Function to get profiles based on locale from params
-export function getProfile(index: number) {
-    const locale = useLocale();
-  
-    if (locale === "ja") {
-      return profiles[index];
-    } else if (locale === "en") {
-      return profiles_eng[index];
-    } else {
-      throw new Error("Unsupported locale");
-    }
-  }
-
-  // Example usage
-  export function getProfiles(
-    index: number,
-    params: { locale: string }
-  ): Profile {
-    const selectedProfiles = getProfile(index);
-    return selectedProfiles[index];
-  }
-*/
