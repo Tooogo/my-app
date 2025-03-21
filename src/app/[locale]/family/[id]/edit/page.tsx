@@ -1,5 +1,6 @@
 import { getProfileById } from '@/app/services';
 import UserForm from '../../../../components/UserForm';
+import ParentComponent from '@/app/components/ParentComponent';
 
 export default async function HomePage({ params }: { params: { id: string } }) {
   const { id } = await params;
@@ -9,8 +10,8 @@ export default async function HomePage({ params }: { params: { id: string } }) {
     <div>
       <h1>User Profile</h1>
       {profile ? (
-        <UserForm
-          data={profile} 
+        <ParentComponent
+          userData={profile}
         />
       ) : (
         <div>Profile not found</div>
