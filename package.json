@@ -9,9 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "argon2": "^0.41.1",
     "bootstrap": "^5.3.3",
     "i18n": "^0.15.1",
     "mongodb": "^6.13.0",
+    "mongoose": "^8.12.1",
     "next": "15.1.6",
     "next-intl": "^3.26.3",
     "react": "^19.0.0",

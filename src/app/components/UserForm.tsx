@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-import { MongoProfile } from '../services/type';
+import { MongoProfile } from '../services/User';
 
 
 export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSubmit: (profile: MongoProfile) => Promise<void> }) {
@@ -9,11 +9,8 @@ export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSub
     _id: '',
     name: '',
     locale: 'en',
-    hobby: '',
-    area: '',
-    club: '',
-    part_time_job: '',
-    self_introduction: [],
+    email: '',
+    pass: '',
   };
   const [profile, setProfile] = useState<MongoProfile>(data ?? defaultProfile);
   console.log(onSubmit);
@@ -23,13 +20,17 @@ export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSub
     setProfile((prev) => ({ ...prev, [field]: event.target.value }));
   };
 
-
-  // フォーム送信時の処理
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(profile);
-    await onSubmit(profile);
+    console.log("Submitting profile:", profile); // 送信前のデータを確認
+    try {
+      const result = await onSubmit(profile);
+      console.log("Insert result:", result); // MongoDB からのレスポンスを確認
+    } catch (error) {
+      console.error("Submission error:", error);
+    }
   };
+
 
   return (
     <div className="container mt-5">
@@ -48,20 +49,12 @@ export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSub
             </select>
           </div>
           <div className="mb-3">
-            <label htmlFor="hobby" className="form-label">Hobby:</label>
-            <input type="text" id="hobby" className="form-control" value={profile.hobby} onChange={handleChange('hobby')} required />
+            <label htmlFor="email" className="form-label">Email:</label>
+            <input type="email" id="email" className="form-control" value={profile.email} onChange={handleChange('email')} required />
           </div>
           <div className="mb-3">
-            <label htmlFor="area" className="form-label">Area:</label>
-            <input type="text" id="area" className="form-control" value={profile.area} onChange={handleChange('area')} required />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="club" className="form-label">Club:</label>
-            <input type="text" id="club" className="form-control" value={profile.club} onChange={handleChange('club')} required />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="part_time_job" className="form-label">Part-time job:</label>
-            <input type="text" id="part_time_job" className="form-control" value={profile.part_time_job} onChange={handleChange('part_time_job')} required />
+            <label htmlFor="pass" className="form-label">Password:</label>
+            <input type="password" id="pass" className="form-control" value={profile.pass} onChange={handleChange('pass')} required />
           </div>
           <button type="submit" className="btn btn-primary w-100">{isEditMode ? 'Update' : 'Register'}</button>
         </form>
