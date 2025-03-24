@@ -5,17 +5,7 @@ import { getProfiles } from "../services";
 import { Inter } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-/*
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-*/
 const inter = Inter({ subsets: ['latin'] })
 
 
@@ -31,7 +21,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = params;
+  const { locale } = await params;
   const profiles = await getProfiles(locale); // サーバーで直接データ取得
 
   return (

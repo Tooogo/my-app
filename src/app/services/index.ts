@@ -2,10 +2,14 @@
 // import { routing } from "../../i18n/routing"
 // import { useLocale, useTranslations } from 'next-intl';
 import client from "../../lib/mongodb";
+import { AdminProfile } from "./AdminUsertypes";
 import { MongoProfile } from "./type"
 const DATABASE = "DATABASE_TEST1"
 const COLLECTION = "COLLECTION_TEST1"
+const AdminCollection = "Admin_User"
 import { ObjectId } from 'mongodb'
+import argon2 from 'argon2';
+import { createSession } from "@/lib/session";
 
 function getDatabase() {
   return client.db(DATABASE);
@@ -13,6 +17,10 @@ function getDatabase() {
 
 function getCollection() {
   return getDatabase().collection<MongoProfile>(COLLECTION);
+}
+
+function getAdminCollection() {
+  return getDatabase().collection(AdminCollection);
 }
 
 // locale に応じたプロフィールを取得する関数
@@ -63,4 +71,54 @@ export async function updateUserInMongoDB(id: string, data: MongoProfile): Promi
 
   const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData });
   return { modifiedCount: result.modifiedCount };
+}
+
+
+export async function Authenticator(data: AdminProfile): Promise<"OK" | "Invalid credentials"> {
+  const { email, pass } = data;
+  const collection = getAdminCollection();
+  const user = await collection.findOne({ email });
+
+  console.log("Login attempt:", { email, pass }); // デバッグ用
+  console.log("User found in DB:", user); // デバッグ用
+
+  if (!user || !user.pass) {
+    console.log("Authentication failed: Invalid credentials"); // デバッグ用
+    return "Invalid credentials";
+  }
+
+  // ハッシュ化されたパスワードと比較
+  const isValid = await argon2.verify(user.pass, pass);
+  if (!isValid) {
+    console.log("Authentication failed: Invalid credentials"); // デバッグ用
+    return "Invalid credentials";
+  }
+
+
+  await createSession(user._id.toString());
+  console.log("Authentication successful: OK"); // デバッグ用
+  return "OK";
+}
+
+export async function RegisterAdminUser(data: AdminProfile): Promise<{ insertedId: string }> {
+  const { username, email, pass } = data;
+  const collection = getAdminCollection();
+
+  // メールアドレスの重複チェック
+  const existingUser = await collection.findOne({ email });
+  if (existingUser) {
+    throw new Error("このメールアドレスは既に登録されています");
+  }
+
+  // パスワードを Argon2 でハッシュ化
+  const hashedPassword = await argon2.hash(pass);
+
+  // ユーザー情報を保存
+  const result = await collection.insertOne({
+    username,
+    email,
+    pass: hashedPassword,  // ハッシュ化したパスワードを保存
+  });
+
+  return { insertedId: result.insertedId.toString() };
 }
