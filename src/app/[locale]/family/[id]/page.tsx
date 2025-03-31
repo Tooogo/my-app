@@ -33,7 +33,7 @@ const textStyling = (block: string): string => {
 
 // TODO #5 Fetch data from mongodb for specific user & specific lang https://nextjs.org/docs/app/api-reference/functions/use-params
 export default async function FamilyMember({ params }: {
-  params: { id: string }
+  params: { id: string, locale: string }
 }) {
   const { id } = await params; // 修正: awaitを削除
   const t = await getTranslations('Home');
@@ -88,7 +88,7 @@ export default async function FamilyMember({ params }: {
         </ol>
 
         <Link
-          href={`./edit`}
+          href={`/${params.locale}/family/${params.id}/edit/`}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Edit

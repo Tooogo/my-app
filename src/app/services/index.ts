@@ -2,10 +2,14 @@
 // import { routing } from "../../i18n/routing"
 // import { useLocale, useTranslations } from 'next-intl';
 import client from "../../lib/mongodb";
+import { AdminProfile } from "./AdminUsertypes";
 import { MongoProfile } from "./type"
 const DATABASE = "DATABASE_TEST1"
 const COLLECTION = "COLLECTION_TEST1"
+const AdminCollection = "Admin_User"
 import { ObjectId } from 'mongodb'
+import argon2 from 'argon2';
+import { createSession } from "@/lib/session";
 
 function getDatabase() {
   return client.db(DATABASE);
@@ -13,6 +17,10 @@ function getDatabase() {
 
 function getCollection() {
   return getDatabase().collection<MongoProfile>(COLLECTION);
+}
+
+function getAdminCollection() {
+  return getDatabase().collection(AdminCollection);
 }
 
 // locale に応じたプロフィールを取得する関数
@@ -39,13 +47,8 @@ export async function getProfileWithNameAndID(locale: string): Promise<{ _id: Ob
 }
 
 
-export async function WritingDataToMongoDB(data: FormData): Promise<{ insertedId: string }> {
-  const name = data.get('name')?.toString() || '';
-  const locale = data.get('locale')?.toString() || '';
-  const hobby = data.get('hobby')?.toString() || '';
-  const area = data.get('area')?.toString() || '';
-  const club = data.get('club')?.toString() || '';
-  const part_time_job = data.get('part_time_job')?.toString() || '';
+export async function WritingDataToMongoDB(data: MongoProfile): Promise<{ insertedId: string }> {
+  const { name, locale, hobby, area, club, part_time_job } = data;
 
   const collection = await getCollection();
   const result = await collection.insertOne({ name, locale, hobby, area, club, part_time_job });
@@ -53,69 +56,72 @@ export async function WritingDataToMongoDB(data: FormData): Promise<{ insertedId
   return { insertedId: result.insertedId.toString() };
 }
 
+export async function updateUserInMongoDB(id: string, data: MongoProfile): Promise<{ modifiedCount: number }> {
+  const { name, locale, hobby, area, club, part_time_job } = data;
 
 
-export async function updateUserInMongoDB(id: string, data: FormData): Promise<{ modifiedCount: number }> {
-  const collection = getCollection();
+  const collection = await getCollection();
   const updateData = {
-    name: data.get('name')?.toString() || '',
-    locale: data.get('locale')?.toString() || '',
-    hobby: data.get('hobby')?.toString() || '',
-    area: data.get('area')?.toString() || '',
-    club: data.get('club')?.toString() || '',
-    part_time_job: data.get('part_time_job')?.toString() || '',
+    name: name,
+    locale: locale,
+    hobby: hobby,
+    area: area,
+    club: club,
+    part_time_job: part_time_job,
+
   };
 
   const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData });
   return { modifiedCount: result.modifiedCount };
 }
 
-/*
-// TODO #3 refactor to shared db service
-export async function getProfiles(): Promise<MongoProfile[]> {
-    const profiles = await getCollection().find({}).toArray();
-        return profiles as MongoProfile[];
-    }
 
 
-// TODO #2 Change to fetching from Mongo
-export async function getProfile(index: number): Promise<MongoProfile> {
-    const profiles = await getProfiles();
-    return profiles[index];
-}
+export async function Authenticator(data: AdminProfile): Promise<"OK" | "Invalid credentials"> {
+  const { email, pass } = data;
+  const collection = getAdminCollection();
+  const user = await collection.findOne({ email });
 
-getProfiles().then((profiles) => console.log(profiles)).catch(console.error);
+  console.log("Login attempt:", { email, pass }); // デバッグ用
+  console.log("User found in DB:", user); // デバッグ用
 
-// TODO #4 How to support multiple languages?
-export function getProfile_eng(index: number) {
-    return profiles_eng[index];
-}
-
-export function getProfiles_eng() {
-    return profiles_eng;
-}
-*/
-
-/*
-// Function to get profiles based on locale from params
-export function getProfile(index: number) {
-    const locale = useLocale();
-  
-    if (locale === "ja") {
-      return profiles[index];
-    } else if (locale === "en") {
-      return profiles_eng[index];
-    } else {
-      throw new Error("Unsupported locale");
-    }
+  if (!user || !user.pass) {
+    console.log("Authentication failed: Invalid credentials"); // デバッグ用
+    return "Invalid credentials";
   }
 
-  // Example usage
-  export function getProfiles(
-    index: number,
-    params: { locale: string }
-  ): Profile {
-    const selectedProfiles = getProfile(index);
-    return selectedProfiles[index];
+  // ハッシュ化されたパスワードと比較
+  const isValid = await argon2.verify(user.pass, pass);
+  if (!isValid) {
+    console.log("Authentication failed: Invalid credentials"); // デバッグ用
+    return "Invalid credentials";
   }
-*/
+
+
+  await createSession(user._id.toString());
+  console.log("Authentication successful: OK"); // デバッグ用
+  return "OK";
+}
+
+export async function RegisterAdminUser(data: AdminProfile): Promise<{ insertedId: string }> {
+  const { username, email, pass } = data;
+  const collection = getAdminCollection();
+
+  // メールアドレスの重複チェック
+  const existingUser = await collection.findOne({ email });
+  if (existingUser) {
+    throw new Error("このメールアドレスは既に登録されています");
+  }
+
+  // パスワードを Argon2 でハッシュ化
+  const hashedPassword = await argon2.hash(pass);
+
+  // ユーザー情報を保存
+  const result = await collection.insertOne({
+    username,
+    email,
+    pass: hashedPassword,  // ハッシュ化したパスワードを保存
+  });
+
+  return { insertedId: result.insertedId.toString() };
+}

@@ -6,6 +6,7 @@ type SelfIntroduction = {
 
 export type Profile = {
     name: string;
+    locale: string;
     hobby: string;
     area: string;
     club: string;
