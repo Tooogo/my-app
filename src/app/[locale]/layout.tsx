@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import Link from 'next/link'
+import Link from 'next/link';
 import { getProfiles } from "../services";
-import { Inter } from 'next/font/google'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { Inter } from 'next/font/google';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import LogoutButton from "../components/LogoutButton"; // 追加
 
-
-const inter = Inter({ subsets: ['latin'] })
-
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,8 +20,9 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = await params;
-  const profiles = await getProfiles(locale); // サーバーで直接データ取得
+  const locale = params.locale; // params をそのまま扱う
+
+  const profiles = await getProfiles(locale); // サーバーでデータ取得
 
   return (
     <html lang={locale}>
@@ -37,56 +37,18 @@ export default async function RootLayout({
             ))}
           </div>
 
-          {/* Registration ボタンを追加 */}
-          <Link href={`/${locale}/submit`}>
-            <button className="btn btn-primary">Registration</button>
-          </Link>
+          <div>
+            {/* Registration ボタン */}
+            <Link href={`/${locale}/submit`}>
+              <button className="btn btn-primary me-3">Registration</button>
+            </Link>
+
+            {/* ログアウトボタン (Client Component に変更) */}
+            <LogoutButton />
+          </div>
         </nav>
         {children}
       </body>
     </html>
   );
 }
-
-/*
-export default function RootLayout({
-  children, params: { id }
-}: Readonly<{
-  children: React.ReactNode;
-  params: { id: number }
-}>) {
-  const messages = useMessages();
-  const locale = useLocale()
-  const familyProfiles = locale === 'en' ? getProfiles_eng() : getProfiles();
-
-  return (
-    <html lang={locale}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <nav>
-          <Link
-            key="home"
-            href='/'>
-            {"Home"}
-          </Link>
-          {
-            familyProfiles.map((profile, index) => (
-              <Link
-                key={index}
-                href={`/${locale}/family/${index}`}>
-                {profile.name}
-              </Link>
-            ))
-          }
-
-        </nav>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-
-      </body>
-    </html>
-  );
-}
-*/
