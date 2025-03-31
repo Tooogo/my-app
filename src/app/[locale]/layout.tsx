@@ -39,7 +39,7 @@ export default async function RootLayout({
 
           <div>
             {/* Registration ボタン */}
-            <Link href={`/${locale}/submit`}>
+            <Link href={`/${locale}/submit/`}>
               <button className="btn btn-primary me-3">Registration</button>
             </Link>
 

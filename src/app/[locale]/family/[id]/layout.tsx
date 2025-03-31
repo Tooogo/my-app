@@ -1,23 +1,7 @@
 import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
-//import "./globals.css";
-//import { Inter } from 'next/font/google';
-// import { useTranslation } from 'next-i18next';
 import Link from 'next/link'
 import { getProfileWithNameAndID } from "../../../services";
-//import {NextIntlClientProvider, useMessages} from 'next-intl';
 
-/*
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-*/
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -40,7 +24,7 @@ export default async function RootLayout({
         <nav>
           <Link key="home" href="/">Home</Link>
           {profiles.map((profile, index) => (
-            <Link key={index} href={`/${locale}/family/${profile._id}`}>
+            <Link key={index} href={`/${locale}/family/${profile._id}/`}>
               {profile.name}
             </Link>
           ))}
@@ -51,25 +35,3 @@ export default async function RootLayout({
   );
 }
 
-/*
-export default function RootLayout({
-  children, params: {locale}
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const messages = useMessages();
-
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-
-      </body>
-    </html>
-  );
-}
-*/
