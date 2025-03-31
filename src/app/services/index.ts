@@ -59,6 +59,7 @@ export async function WritingDataToMongoDB(data: MongoProfile): Promise<{ insert
 export async function updateUserInMongoDB(id: string, data: MongoProfile): Promise<{ modifiedCount: number }> {
   const { name, locale, hobby, area, club, part_time_job } = data;
 
+
   const collection = await getCollection();
   const updateData = {
     name: name,
@@ -67,11 +68,13 @@ export async function updateUserInMongoDB(id: string, data: MongoProfile): Promi
     area: area,
     club: club,
     part_time_job: part_time_job,
+
   };
 
   const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData });
   return { modifiedCount: result.modifiedCount };
 }
+
 
 
 export async function Authenticator(data: AdminProfile): Promise<"OK" | "Invalid credentials"> {
