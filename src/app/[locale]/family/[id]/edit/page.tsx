@@ -1,9 +1,11 @@
+
 import { getProfileById } from '@/app/services';
 import ParentComponent from '@/app/components/ParentComponent';
 
 export default async function HomePage({ params }: { params: { id: string } }) {
   const { id } = await params;
   const profile = await getProfileById(id);
+
 
   return (
     <div>

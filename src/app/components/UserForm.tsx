@@ -19,9 +19,11 @@ export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSub
   console.log(onSubmit);
   const isEditMode = data?._id ? true : false;
 
+
   const handleChange = (field: keyof MongoProfile) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setProfile((prev) => ({ ...prev, [field]: event.target.value }));
   };
+
 
 
   // フォーム送信時の処理
@@ -29,12 +31,15 @@ export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSub
     event.preventDefault();
     console.log(profile);
     await onSubmit(profile);
+
   };
 
   return (
     <div className="container mt-5">
       <div className="card shadow p-4">
+
         <h2 className="text-center mb-4">{isEditMode ? 'Edit Profile' : 'User Registration'}</h2>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="name" className="form-label">Name:</label>
@@ -64,6 +69,7 @@ export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSub
             <input type="text" id="part_time_job" className="form-control" value={profile.part_time_job} onChange={handleChange('part_time_job')} required />
           </div>
           <button type="submit" className="btn btn-primary w-100">{isEditMode ? 'Update' : 'Register'}</button>
+
         </form>
       </div>
     </div>

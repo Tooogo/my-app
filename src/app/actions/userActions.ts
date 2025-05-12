@@ -1,14 +1,17 @@
 'use server';
 
+
 import { WritingDataToMongoDB, updateUserInMongoDB, Authenticator, RegisterAdminUser } from '../services';
 import { MongoProfile } from '../services/type';
 import { AdminProfile } from '../services/AdminUsertypes';
 import { deleteSession } from "@/lib/session";
 
 
+
 export async function registerUser(data: MongoProfile) {
   return await WritingDataToMongoDB(data);
 }
+
 
 export async function updateUser(id: string, data: MongoProfile) {
   return await updateUserInMongoDB(id, data);
