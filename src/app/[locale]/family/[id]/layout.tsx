@@ -15,12 +15,11 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string; id: string };
 }) {
-  const { locale } = await params; // 修正: awaitを削除
+  const { locale } = await params;
   const profiles = await getProfileWithNameAndID(locale); // サーバーで直接データ取得
 
   return (
-    <html lang={locale}>
-      <body>
+      <>
         <nav>
           <Link key="home" href="/">Home</Link>
           {profiles.map((profile, index) => (
@@ -30,8 +29,7 @@ export default async function RootLayout({
           ))}
         </nav>
         {children}
-      </body>
-    </html>
+      </>
   );
 }
 

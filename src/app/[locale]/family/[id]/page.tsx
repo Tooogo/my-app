@@ -35,7 +35,7 @@ const textStyling = (block: string): string => {
 export default async function FamilyMember({ params }: {
   params: { id: string, locale: string }
 }) {
-  const { id } = await params; // 修正: awaitを削除
+  const { id, locale } = await params; // 修正: awaitを削除
   const t = await getTranslations('Home');
 
   //const locale = useLocale();
@@ -46,7 +46,7 @@ export default async function FamilyMember({ params }: {
     return <div>{t('profileNotFound')}</div>; // プロフィールが見つからない場合のエラーメッセージ
   }
 
-  //const profile = locale === 'ja' ? getProfile(Number(params.id)) : getProfile_eng(Number(params.id));
+  //const profile = locale === 'ja' ? getProfile(Number(id)) : getProfile_eng(Number(id));
   let h2Count = 0;  // h2が出てきた回数をカウントする変数
 
   return (
@@ -88,7 +88,7 @@ export default async function FamilyMember({ params }: {
         </ol>
 
         <Link
-          href={`/${params.locale}/family/${params.id}/edit/`}
+          href={`/${locale}/family/${id}/edit/`}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Edit

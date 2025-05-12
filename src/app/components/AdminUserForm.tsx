@@ -1,37 +1,43 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AdminProfile } from '../services/AdminUsertypes';
+import { useRouter } from 'next/navigation'; // Next.js公式のリダイレクト方法
 
 export default function UserForm({ onSubmit }: { onSubmit: (profile: AdminProfile) => Promise<"OK" | "Invalid credentials"> }) {
-  const [profile, setProfile] = useState<AdminProfile>({ _id: '', username: '', email: '', pass: '' });
-  const [error, setError] = useState<string | null>(null); // エラーメッセージ用
+  const [profile, setProfile] = useState<AdminProfile>({ username: '', email: '', pass: '' });
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
+  const router = useRouter(); // Next.jsのルーター
 
   const handleChange = (field: keyof AdminProfile) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setProfile((prev) => ({ ...prev, [field]: event.target.value }));
   };
 
-  // フォーム送信時の処理
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setError(null); // エラーリセット
+    setError(null);
 
     const result = await onSubmit(profile);
 
     if (result === "Invalid credentials") {
       setError("ログインに失敗しました。");
     } else {
-      alert("ログイン成功！");
-      window.location.href = "/en";
+      setSuccess(true); // 成功フラグを立てる
     }
   };
 
+  useEffect(() => {
+    if (success) {
+      router.push('/en'); // クライアント遷移で安全にリダイレクト
+    }
+  }, [success, router]);
 
   return (
     <div className="container mt-5">
       <div className="card shadow p-4">
         <h2 className="text-center mb-4">User Login</h2>
-        {error && <p className="text-danger text-center">{error}</p>} {/* エラーメッセージ表示 */}
+        {error && <p className="text-danger text-center">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Email:</label>

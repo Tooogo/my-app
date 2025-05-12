@@ -20,7 +20,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const locale = params.locale; // params をそのまま扱う
+  const p = await params
+  const locale = p.locale; // params をそのまま扱う
 
   const profiles = await getProfiles(locale); // サーバーでデータ取得
 

@@ -10,23 +10,37 @@ export async function middleware(request: NextRequest) {
   // ログインしないと入れないサイトを指定
   const protectedRoutes = [
     '/en/submit/',
+    '/jp/submit/',
     /^\/en\/family\/[^/]+\/edit\/$/,
+    /^\/jp\/family\/[^/]+\/edit\/$/,
   ];
 
   // `protectedRoutes` のいずれかにマッチするかチェック
-  const isProtectedRoute = protectedRoutes.some(route =>
-    typeof route === 'string' ? pathname === route : route.test(pathname)
-  );
-
+  const isProtectedRoute = protectedRoutes.some(route => new RegExp(route).test(pathname));
+  console.log("enter")
+  console.log("isProtected", isProtectedRoute)
+  console.log("route", pathname)
   if (isProtectedRoute && !session) {
-    return NextResponse.redirect(new URL('/en', request.url)); // 未ログインなら/loginへリダイレクト
+    console.log("redirect")
+    return NextResponse.redirect(new URL('/login', request.url)); // 未ログインなら/loginへリダイレクト
   }
 
-
+  console.log("exit")
   return NextResponse.next(); // 他のケースではそのまま進む
 }
 
-// middlewareを適用するルートを指定（全てのページに適用）
+
+// // middlewareを適用するルートを指定（全てのページに適用）
+// export const config = {
+//   matcher: ['/:path*'], // 全てのページに対してmiddlewareを適用
+// };
+
 export const config = {
-  matcher: ['/:path*'], // 全てのページに対してmiddlewareを適用
+  matcher: [
+    // 実際にログイン制限をかけたいページだけを明示的に記述
+    '/en/family/:id/edit/', // 必要なら ja も追加
+    '/ja/family/:id/edit/',
+  ],
 };
+
+

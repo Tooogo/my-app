@@ -26,8 +26,7 @@ export async function authenticateUser(data: AdminProfile) {
 }
 
 export async function logoutAdminUser(): Promise<"OK"> {
-  await deleteSession(); // セッションを削除
-  console.log("Admin user logged out"); // デバッグ用
-  window.location.href = "/en"; // ログアウト後にリダイレクト
-  return "OK";
+  await deleteSession();
+  console.log("Admin user logged out");
+  return "OK"; // ここでは副作用なし
 }
