@@ -30,17 +30,10 @@ export async function middleware(request: NextRequest) {
 }
 
 
-// // middlewareを適用するルートを指定（全てのページに適用）
-// export const config = {
-//   matcher: ['/:path*'], // 全てのページに対してmiddlewareを適用
-// };
+// middlewareを適用するルートを指定（全てのページに適用）
+ export const config = {
+   matcher: ['/:path*'], // 全てのページに対してmiddlewareを適用
+ };
 
-export const config = {
-  matcher: [
-    // 実際にログイン制限をかけたいページだけを明示的に記述
-    '/en/family/:id/edit/', // 必要なら ja も追加
-    '/ja/family/:id/edit/',
-  ],
-};
 
 
