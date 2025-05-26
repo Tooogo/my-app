@@ -1,10 +1,11 @@
 'use server';
 
 
-import { WritingDataToMongoDB, updateUserInMongoDB, Authenticator, RegisterAdminUser } from '../services';
+import { WritingDataToMongoDB, updateUserInMongoDB, Authenticator, RegisterAdminUser, updateAdminInMongoDB } from '../services';
 import { MongoProfile } from '../services/type';
 import { AdminProfile } from '../services/AdminUsertypes';
 import { deleteSession } from "@/lib/session";
+
 
 
 
@@ -20,6 +21,10 @@ export async function updateUser(id: string, data: MongoProfile) {
 
 export async function registerAdminUser(data: AdminProfile) {
   return await RegisterAdminUser(data);
+}
+
+export async function updateAdminUser(id: string, data: AdminProfile) {
+  return await updateAdminInMongoDB(id, data);
 }
 
 export async function authenticateUser(data: AdminProfile) {

@@ -2,7 +2,7 @@
 
 import UserForm from './registerAdminUserform';
 import { AdminProfile } from '../services/AdminUsertypes';
-import { registerAdminUser } from '../actions/userActions';
+import { registerAdminUser, updateAdminUser } from '../actions/userActions';
 
 
 
@@ -13,11 +13,17 @@ const defaultProfile: AdminProfile = {
   pass: '',
 };
 
+
 export default function ParentComponent({ userData }: { userData?: AdminProfile }) {
   const profile = userData ?? defaultProfile;
+
   const handleSubmit = async (profile: AdminProfile) => {
-      return await registerAdminUser(profile);
-    };
+    if (profile._id) {
+      await updateAdminUser(profile._id, profile);
+    } else {
+      await registerAdminUser(profile);
+    }
+  };
 
   return <UserForm data={profile} onSubmit={handleSubmit} />;
 }

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getProfiles } from "../services";
 import { Inter } from 'next/font/google';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import LogoutButton from "../components/LogoutButton"; // 追加
+import LogoutButton from "../components/LogoutButton";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,11 +20,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-
-  const locale = params.locale; // params をそのまま扱う
-
-  const profiles = await getProfiles(locale); // サーバーでデータ取得
-
+  const locale = params.locale;
+  const profiles = await getProfiles(locale);
 
   return (
     <html lang={locale}>
@@ -40,12 +37,17 @@ export default async function RootLayout({
           </div>
 
           <div>
-            {/* Registration ボタン */}
-            <Link href={`/${locale}/submit/`}>
-              <button className="btn btn-primary me-3">Registration</button>
+            {/* My Page ボタン（常時表示） */}
+            <Link href={`/${locale}/mypage`} className="me-3">
+              <button className="btn btn-success">My Page</button>
             </Link>
 
-            {/* ログアウトボタン (Client Component に変更) */}
+            {/* Registration ボタン */}
+            <Link href={`/${locale}/submit/`} className="me-3">
+              <button className="btn btn-primary">Registration</button>
+            </Link>
+
+            {/* Logout */}
             <LogoutButton />
           </div>
         </nav>

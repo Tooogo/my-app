@@ -6,11 +6,14 @@ export async function middleware(request: NextRequest) {
   const session = await getSession(); // getSession 関数でセッション情報を取得
   const { pathname } = request.nextUrl;
   console.log('session:', session)
+  console.log("pathname:", request.nextUrl.pathname);
 
   // ログインしないと入れないサイトを指定
   const protectedRoutes = [
     '/en/submit/',
     '/jp/submit/',
+    '/en/mypage/',
+    '/jp/mypage/',
     /^\/en\/family\/[^/]+\/edit\/$/,
     /^\/jp\/family\/[^/]+\/edit\/$/,
   ];
@@ -31,9 +34,25 @@ export async function middleware(request: NextRequest) {
 
 
 // middlewareを適用するルートを指定（全てのページに適用）
- export const config = {
-   matcher: ['/:path*'], // 全てのページに対してmiddlewareを適用
- };
+/*
+export const config = {
+  matcher: ['/:path*'], // 全てのページに対してmiddlewareを適用
+};
+*/
 
-
-
+export const config = {
+  matcher: [
+    '/en/submit',
+    '/en/submit/',
+    '/ja/submit',
+    '/ja/submit/',
+    '/en/mypage',
+    '/en/mypage/',
+    '/ja/mypage',
+    '/ja/mypage/',
+    '/en/family/:id/edit',
+    '/en/family/:id/edit/',
+    '/ja/family/:id/edit',
+    '/ja/family/:id/edit/',
+  ],
+};

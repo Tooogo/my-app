@@ -6,6 +6,7 @@ import { authenticateUser } from '../actions/userActions';
 
 
 const defaultProfile: AdminProfile = {
+  _id: '',
   username: '',
   email: '',
   pass: '',
