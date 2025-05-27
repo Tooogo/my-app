@@ -7,6 +7,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   console.log('session:', session)
   console.log("pathname:", request.nextUrl.pathname);
+  console.log("url:", request.url);
 
   // ログインしないと入れないサイトを指定
   const protectedRoutes = [
@@ -17,42 +18,28 @@ export async function middleware(request: NextRequest) {
     /^\/en\/family\/[^/]+\/edit\/$/,
     /^\/jp\/family\/[^/]+\/edit\/$/,
   ];
-
-  // `protectedRoutes` のいずれかにマッチするかチェック
   const isProtectedRoute = protectedRoutes.some(route => new RegExp(route).test(pathname));
-  console.log("enter")
-  console.log("isProtected", isProtectedRoute)
-  console.log("route", pathname)
+  console.log("enter");
+  console.log("isProtected", isProtectedRoute);
+  console.log("route", pathname);
+
+  // 保護されたページに未ログインでアクセス → /login にリダイレクト
   if (isProtectedRoute && !session) {
-    console.log("redirect")
-    return NextResponse.redirect(new URL('/login', request.url)); // 未ログインなら/loginへリダイレクト
+    console.log("redirect to login");
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  console.log("exit")
-  return NextResponse.next(); // 他のケースではそのまま進む
+
+  console.log("exit");
+  return NextResponse.next();
 }
 
-
-// middlewareを適用するルートを指定（全てのページに適用）
-/*
-export const config = {
-  matcher: ['/:path*'], // 全てのページに対してmiddlewareを適用
-};
-*/
 
 export const config = {
   matcher: [
     '/en/submit',
-    '/en/submit/',
-    '/ja/submit',
     '/ja/submit/',
     '/en/mypage',
-    '/en/mypage/',
-    '/ja/mypage',
     '/ja/mypage/',
-    '/en/family/:id/edit',
-    '/en/family/:id/edit/',
-    '/ja/family/:id/edit',
-    '/ja/family/:id/edit/',
   ],
 };
