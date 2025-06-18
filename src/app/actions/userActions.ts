@@ -4,7 +4,7 @@
 import { WritingDataToMongoDB, updateUserInMongoDB, Authenticator, RegisterAdminUser, updateAdminInMongoDB } from '../services';
 import { MongoProfile } from '../services/type';
 import { AdminProfile } from '../services/AdminUsertypes';
-import { deleteSession } from "@/lib/session";
+import { deleteSession } from "@/lib/session/session";
 
 
 

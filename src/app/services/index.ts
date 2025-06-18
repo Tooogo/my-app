@@ -9,8 +9,8 @@ const COLLECTION = "COLLECTION_TEST1"
 const AdminCollection = "Admin_User"
 import { ObjectId } from 'mongodb'
 import argon2 from 'argon2';
-import { createSession } from "@/lib/session";
-import { getSession } from "@/lib/session";
+import { createSession } from "@/lib/session/session";
+import { getSession } from "@/lib/session/session";
 
 function getDatabase() {
   return client.db(DATABASE);
@@ -83,7 +83,7 @@ export async function Authenticator(data: AdminProfile): Promise<"OK" | "Invalid
   }
 
 
-  await createSession(user._id.toString());
+  await createSession(user._id.toString(), user.role || 'admin'); // セッションを作成
   console.log("Authentication successful: OK"); // デバッグ用
   return "OK";
 }
@@ -106,6 +106,7 @@ export async function RegisterAdminUser(data: AdminProfile): Promise<{ insertedI
     username,
     email,
     pass: hashedPassword,  // ハッシュ化したパスワードを保存
+    role: 'admin'
   });
 
   return { insertedId: result.insertedId.toString() };

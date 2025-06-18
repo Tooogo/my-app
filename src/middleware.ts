@@ -1,45 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from './lib/session'; // getSession 関数をインポート
+import { getSession } from './lib/session/getSession';
+import { ROUTE_PATHS, ROUTE_ACCESS } from './lib/routes/accessMap';
+import type { RouteKey } from './lib/routes/keys';
 
 
 export async function middleware(request: NextRequest) {
-  const session = await getSession(); // getSession 関数でセッション情報を取得
+  const session = await getSession();
+  console.log('Session:', session);
+  const response = NextResponse.next();
   const { pathname } = request.nextUrl;
-  console.log('session:', session)
-  console.log("pathname:", request.nextUrl.pathname);
-  console.log("url:", request.url);
 
-  // ログインしないと入れないサイトを指定
-  const protectedRoutes = [
-    '/en/submit/',
-    '/jp/submit/',
-    '/en/mypage/',
-    '/jp/mypage/',
-    /^\/en\/family\/[^/]+\/edit\/$/,
-    /^\/jp\/family\/[^/]+\/edit\/$/,
-  ];
-  const isProtectedRoute = protectedRoutes.some(route => new RegExp(route).test(pathname));
-  console.log("enter");
-  console.log("isProtected", isProtectedRoute);
-  console.log("route", pathname);
+  const matchedKey = (Object.keys(ROUTE_PATHS) as RouteKey[]).find((key) => {
+    const pathPattern = ROUTE_PATHS[key];
+    const raw = typeof pathPattern === 'function' ? pathPattern(':id') : pathPattern;
+    const pattern = '^' + raw.replace(':id', '[^/]+') + '/?$';
+    return new RegExp(pattern).test(pathname);
+  });
 
-  // 保護されたページに未ログインでアクセス → /login にリダイレクト
-  if (isProtectedRoute && !session) {
-    console.log("redirect to login");
+  // 権限管理対象外のルートだった場合はそのまま通過
+  if (!matchedKey) return response;
+  //　ログインしていない場合はログインページへリダイレクト
+  if (!session) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
-
-
-  console.log("exit");
-  return NextResponse.next();
+  // 権限がなければ404エラーを返す
+  const allowed = ROUTE_ACCESS[matchedKey];
+  if (!allowed.includes(session.role)) {
+    return NextResponse.redirect(new URL('/not-found', request.url));
+  }
+  // ログインしていて権限がある場合はそのまま通過
+  return response;
 }
 
 
 export const config = {
-  matcher: [
-    '/en/submit',
-    '/ja/submit/',
-    '/en/mypage',
-    '/ja/mypage/',
-  ],
+  matcher: ['/:path*'],
 };

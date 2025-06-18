@@ -5,6 +5,7 @@ import { getProfiles } from "../services";
 import { Inter } from 'next/font/google';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LogoutButton from "../components/LogoutButton";
+import { setRequestLocale } from 'next-intl/server';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,7 +21,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const locale = params.locale;
+  const locale = (await params).locale;
+  setRequestLocale(locale);
   const profiles = await getProfiles(locale);
 
   return (
@@ -37,17 +39,14 @@ export default async function RootLayout({
           </div>
 
           <div>
-            {/* My Page ボタン（常時表示） */}
             <Link href={`/${locale}/mypage`} className="me-3">
               <button className="btn btn-success">My Page</button>
             </Link>
 
-            {/* Registration ボタン */}
             <Link href={`/${locale}/submit/`} className="me-3">
               <button className="btn btn-primary">Registration</button>
             </Link>
 
-            {/* Logout */}
             <LogoutButton />
           </div>
         </nav>

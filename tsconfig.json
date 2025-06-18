@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "src/app/[locale]/pages/404.js"  ],
+, "src/app/[locale]/pages/404.js", "jest.config.cjs"  ],
   "exclude": [
     "node_modules"
   ]
