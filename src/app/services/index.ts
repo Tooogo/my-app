@@ -1,6 +1,3 @@
-// import { promises } from "dns";
-// import { routing } from "../../i18n/routing"
-// import { useLocale, useTranslations } from 'next-intl';
 import client from "../../lib/mongodb";
 import { AdminProfile } from "./AdminUsertypes";
 import { MongoProfile } from "./type"
@@ -10,7 +7,7 @@ const AdminCollection = "Admin_User"
 import { ObjectId } from 'mongodb'
 import argon2 from 'argon2';
 import { createSession } from "@/lib/session/session";
-import { getSession } from "@/lib/session/session";
+import { getSession } from "@/lib/session/getSession";
 
 function getDatabase() {
   return client.db(DATABASE);
