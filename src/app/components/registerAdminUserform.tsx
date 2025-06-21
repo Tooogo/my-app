@@ -2,16 +2,10 @@
 
 import React, { useState } from 'react';
 import { AdminProfile } from '../services/AdminUsertypes';
+import { defaultAdminProfile } from '@/constants/defaultAdminProfile';
 
 export default function UserForm({ data, onSubmit }: { data: AdminProfile, onSubmit: (profile: AdminProfile) => Promise<void> }) {
-  const defaultProfile: AdminProfile = {
-    _id: '',
-    username: '',
-    email: '',
-    pass: '',
-  };
-
-  const [profile, setProfile] = useState<AdminProfile>(data ?? defaultProfile);
+  const [profile, setProfile] = useState<AdminProfile>(data ?? defaultAdminProfile);
   const isEditMode = Boolean(profile._id);
   const handleChange = (field: keyof AdminProfile) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setProfile((prev) => ({ ...prev, [field]: event.target.value }));

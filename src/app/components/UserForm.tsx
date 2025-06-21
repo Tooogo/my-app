@@ -2,29 +2,17 @@
 
 import React, { useState } from 'react';
 import { MongoProfile } from '../services/type';
+import { defaultMongoProfile } from '@/constants/defaultMongoProfile';
 
 
 export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSubmit: (profile: MongoProfile) => Promise<void> }) {
-  const defaultProfile: MongoProfile = {
-    _id: '',
-    name: '',
-    locale: 'en',
-    hobby: '',
-    area: '',
-    club: '',
-    part_time_job: '',
-    self_introduction: [],
-  };
-  const [profile, setProfile] = useState<MongoProfile>(data ?? defaultProfile);
+  const [profile, setProfile] = useState<MongoProfile>(data ?? defaultMongoProfile);
   console.log(onSubmit);
   const isEditMode = data?._id ? true : false;
-
 
   const handleChange = (field: keyof MongoProfile) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setProfile((prev) => ({ ...prev, [field]: event.target.value }));
   };
-
-
 
   // フォーム送信時の処理
   const handleSubmit = async (event: React.FormEvent) => {

@@ -2,18 +2,12 @@
 
 import UserForm from './AdminUserForm';
 import { AdminProfile } from '../services/AdminUsertypes';
+import { defaultAdminProfile } from '@/constants/defaultAdminProfile';
 import { authenticateUser } from '../actions/userActions';
 
 
-const defaultProfile: AdminProfile = {
-  _id: '',
-  username: '',
-  email: '',
-  pass: '',
-};
-
-export default function ParentComponent({ userData }: { userData?: AdminProfile }) {
-  const profile: AdminProfile = userData ?? defaultProfile;
+export default function AdminComponent({ userData }: { userData?: AdminProfile }) {
+  const profile: AdminProfile = userData ?? defaultAdminProfile;
   const handleSubmit = async (profile: AdminProfile) => {
       return await authenticateUser(profile);
     };

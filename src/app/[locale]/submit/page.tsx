@@ -1,5 +1,5 @@
 import UserForm from '../../components/UserForm';
-import { getSession } from '@/lib/session/session';
+import { getSession } from '@/lib/session/getSession';
 
 export default async function HomePage() {
   const session = await getSession(); // ✅ await を使う

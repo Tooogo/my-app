@@ -2,13 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { AdminProfile } from '../services/AdminUsertypes';
-import { useRouter } from 'next/navigation'; // Next.js公式のリダイレクト方法
+import { useRouter } from 'next/navigation';
 
-export default function UserForm({ onSubmit }: { onSubmit: (profile: AdminProfile) => Promise<"OK" | "Invalid credentials"> }) {
-  const [profile, setProfile] = useState<AdminProfile>({ username: '', email: '', pass: '' });
+type Props = {
+  data: AdminProfile;
+  onSubmit: (profile: AdminProfile) => Promise<"OK" | "Invalid credentials">;
+};
+
+export default function UserForm({ data, onSubmit }: Props) {
+  const [profile, setProfile] = useState<AdminProfile>(data);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-  const router = useRouter(); // Next.jsのルーター
+  const router = useRouter();
 
   const handleChange = (field: keyof AdminProfile) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setProfile((prev) => ({ ...prev, [field]: event.target.value }));
