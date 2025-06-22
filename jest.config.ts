@@ -8,8 +8,8 @@ const createJestConfig = nextJest({
 const config: Config = {
   rootDir: './src',
   coverageProvider: 'v8',
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['../jest.setup.ts'],
+  testEnvironment: 'node', // ← MongoDBテストではこちらが自然
+  setupFilesAfterEnv: ['../jest.setup.ts'], // ✅ afterEnvのみに指定
   collectCoverage: true,
   coverageReporters: ['text', 'text-summary'],
   moduleNameMapper: {

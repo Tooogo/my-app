@@ -7,7 +7,6 @@ import { defaultMongoProfile } from '@/constants/defaultMongoProfile';
 
 export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSubmit: (profile: MongoProfile) => Promise<void> }) {
   const [profile, setProfile] = useState<MongoProfile>(data ?? defaultMongoProfile);
-  console.log(onSubmit);
   const isEditMode = data?._id ? true : false;
 
   const handleChange = (field: keyof MongoProfile) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

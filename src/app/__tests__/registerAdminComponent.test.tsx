@@ -10,12 +10,17 @@ jest.mock('@/app/actions/userActions', () => ({
 }));
 
 const defaultProfile: AdminProfile = {
-  _id: '',
+  _id: 'some-id',
   username: 'adminuser',
   email: 'admin@example.com',
   pass: 'password123',
   role: 'admin',
 };
+
+const mockRegister = registerAdminUser as jest.Mock;
+mockRegister.mockResolvedValue('OK');
+const mockUpdate = updateAdminUser as jest.Mock;
+
 
 describe('ParentComponent (AdminProfile)', () => {
   beforeEach(() => {
@@ -23,44 +28,32 @@ describe('ParentComponent (AdminProfile)', () => {
   });
 
   it('userData が渡されない場合は registerAdminUser が呼ばれる', async () => {
-    const mockRegister = registerAdminUser as jest.Mock;
-    mockRegister.mockResolvedValue('OK');
-
     render(<ParentComponent />);
 
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: 'admin@example.com' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'password123' },
-    });
+    // フォームの必須項目に入力
+    fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'newadmin' } });
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'newadmin@example.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'securepass123' } });
 
+    // submit ボタンをクリック
     fireEvent.click(screen.getByRole('button', { name: /register/i }));
 
+    // registerAdminUser が呼ばれたことを検証
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalled();
-      expect(updateAdminUser).not.toHaveBeenCalled();
+      expect(mockUpdate).not.toHaveBeenCalled();
     });
   });
 
+
   it('userData が渡された場合は updateAdminUser が呼ばれる', async () => {
-    const mockUpdate = updateAdminUser as jest.Mock;
-    mockUpdate.mockResolvedValue('OK');
+    render(<ParentComponent userData={defaultProfile} />);
+    fireEvent.click(screen.getByRole('button', { name: /update/i }));
 
-    render(<ParentComponent userData={{ ...defaultProfile, _id: 'abc123' }} />);
-
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: 'admin@example.com' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'password123' },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: /register/i }));
 
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalled();
-      expect(registerAdminUser).not.toHaveBeenCalled();
+      expect(mockRegister).not.toHaveBeenCalled();
     });
   });
 });

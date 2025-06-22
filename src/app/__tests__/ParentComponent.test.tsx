@@ -60,7 +60,7 @@ describe('ParentComponent (MongoProfile)', () => {
 
   it('_id が存在する場合は updateUser が呼ばれる', async () => {
     render(<ParentComponent userData={existingProfile} />);
-    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+    fireEvent.click(screen.getByText(/update/i));
 
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalledWith(existingProfile._id, existingProfile);
@@ -70,7 +70,7 @@ describe('ParentComponent (MongoProfile)', () => {
 
   it('_id が空の新規ユーザーは registerUser が呼ばれる', async () => {
     render(<ParentComponent userData={newProfile} />);
-    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+    fireEvent.click(screen.getByText(/register/i));
 
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalledWith(newProfile);
@@ -80,11 +80,20 @@ describe('ParentComponent (MongoProfile)', () => {
 
   it('userData が渡されない場合は defaultProfile で registerUser を呼ぶ', async () => {
     render(<ParentComponent />);
-    fireEvent.click(screen.getByRole('button', { name: /register/i }));
+
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'テストユーザー' } });
+    fireEvent.change(screen.getByLabelText(/language/i), { target: { value: 'ja' } });
+    fireEvent.change(screen.getByLabelText(/hobby/i), { target: { value: '読書' } });
+    fireEvent.change(screen.getByLabelText(/area/i), { target: { value: '東京' } });
+    fireEvent.change(screen.getByLabelText(/club/i), { target: { value: '写真部' } });
+    fireEvent.change(screen.getByLabelText(/part-time job/i), { target: { value: 'カフェ' } });
+
+    fireEvent.click(screen.getByText(/register/i));
 
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalled();
       expect(mockUpdate).not.toHaveBeenCalled();
     });
   });
+
 });
