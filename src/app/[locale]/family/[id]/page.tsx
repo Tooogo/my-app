@@ -38,12 +38,9 @@ export default async function FamilyMember({ params }: {
   const { id, locale } = await params; // 修正: awaitを削除
   const t = await getTranslations('Home');
 
-  //const locale = useLocale();
-  //const locale = "ja";
-
   const profile = await getProfileById(id);
   if (!profile) {
-    return <div>{t('profileNotFound')}</div>; // プロフィールが見つからない場合のエラーメッセージ
+    return <div>{t('profileNotFound')}</div>;
   }
 
   //const profile = locale === 'ja' ? getProfile(Number(id)) : getProfile_eng(Number(id));

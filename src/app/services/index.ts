@@ -46,16 +46,13 @@ export async function getProfileWithNameAndID(locale: string): Promise<{ _id: Ob
 
 
 export async function WritingDataToMongoDB(data: MongoProfile): Promise<{ insertedId: string }> {
-  const { name, locale, hobby, area, club, part_time_job } = data;
+  const { name, locale, hobby, area, club, part_time_job, self_introduction, _id } = data;
 
   const collection = await getCollection();
-  const result = await collection.insertOne({ name, locale, hobby, area, club, part_time_job });
+  const result = await collection.insertOne({ name, locale, hobby, area, club, part_time_job, self_introduction, _id });
 
   return { insertedId: result.insertedId.toString() };
 }
-
-
-
 
 
 export async function Authenticator(data: AdminProfile): Promise<"OK" | "Invalid credentials"> {
@@ -122,28 +119,25 @@ export async function getCurrentAdminProfile(): Promise<AdminProfile | null> {
     _id: user._id.toString(),
     username: user.username,
     email: user.email,
-    pass: user.pass
+    pass: user.pass,
+    role: user.role || 'admin'
   };
 }
 
-export async function updateUserInMongoDB(id: string, data: MongoProfile): Promise<{ modifiedCount: number }> {
-  const { name, locale, hobby, area, club, part_time_job } = data;
 
+export async function updateUserInMongoDB(
+  id: ObjectId,
+  data: Omit<MongoProfile, '_id'>,
+): Promise<{ modifiedCount: number }> {
+  const { name, locale, hobby, area, club, part_time_job, self_introduction } = data;
 
   const collection = await getCollection();
-  const updateData = {
-    name: name,
-    locale: locale,
-    hobby: hobby,
-    area: area,
-    club: club,
-    part_time_job: part_time_job,
+  const updateData = { name, locale, hobby, area, club, part_time_job, self_introduction };
+  const result = await collection.updateOne({ _id: ObjectId }, { $set: updateData });
 
-  };
-
-  const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData });
   return { modifiedCount: result.modifiedCount };
 }
+
 
 export async function updateAdminInMongoDB(id: string, data: AdminProfile): Promise<{ modifiedCount: number }> {
   const { username, email, pass } = data;
@@ -151,8 +145,9 @@ export async function updateAdminInMongoDB(id: string, data: AdminProfile): Prom
   const collection = await getAdminCollection();
   const updateData = {
     username: username,
-    pass: pass,
     email: email,
+    pass: pass,
+    role: 'admin'
   };
 
   const result = await collection.updateOne(

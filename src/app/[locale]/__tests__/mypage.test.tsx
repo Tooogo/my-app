@@ -1,6 +1,6 @@
 // __tests__/HomePage.test.tsx
 import { render, screen, waitFor } from '@testing-library/react';
-import HomePage from '@/app/[locale]/page';
+import HomePage from '@/app/[locale]/mypage/page';
 import { getCurrentAdminProfile } from '@/app/services';
 import { AdminProfile } from '@/app/services/AdminUsertypes';
 

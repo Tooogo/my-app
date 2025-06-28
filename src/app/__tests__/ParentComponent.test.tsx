@@ -4,6 +4,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ParentComponent from '@/app/components/ParentComponent';
 import { registerUser, updateUser } from '@/app/actions/userActions';
 import type { MongoProfile } from '@/app/services/type';
+import { ObjectId } from 'mongodb';
 
 jest.mock('@/app/actions/userActions', () => ({
   registerUser: jest.fn(),
@@ -14,7 +15,7 @@ const mockRegister = registerUser as jest.Mock;
 const mockUpdate = updateUser as jest.Mock;
 
 const existingProfile: MongoProfile = {
-  _id: 'abc123',
+  _id: new ObjectId('507f1f77bcf86cd799439011'),
   name: '太郎',
   locale: 'ja',
   hobby: 'サッカー',
@@ -31,7 +32,7 @@ const existingProfile: MongoProfile = {
 };
 
 const newProfile: MongoProfile = {
-  _id: '',
+  _id: new ObjectId(),
   name: '花子',
   locale: 'ja',
   hobby: '読書',

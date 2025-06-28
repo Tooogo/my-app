@@ -16,9 +16,9 @@ describe('ROUTE_PATHS', () => {
   it('動的ルートは関数であり、:idを含んだURLを生成する', () => {
     const editKeys = ['EN_FAMILY_EDIT', 'JP_FAMILY_EDIT'] as RouteKey[];
     for (const key of editKeys) {
-      const pathFn = ROUTE_PATHS[key];
+      const pathFn = ROUTE_PATHS[key] as (id: string) => string;
       expect(typeof pathFn).toBe('function');
-      const path = (pathFn as Function)('123');
+      const path = pathFn('123');
       expect(path).toMatch(/\/family\/123\/edit\/?$/);
     }
   });

@@ -1,4 +1,4 @@
-import { getCurrentAdminProfile } from '@/app/services';   
+import { getCurrentAdminProfile } from '@/app/services';
 import ParentComponent from '@/app/components/registerAdminComponent';
 
 export default async function HomePage() {

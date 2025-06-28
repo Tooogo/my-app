@@ -4,6 +4,7 @@ import { WritingDataToMongoDB, updateUserInMongoDB, Authenticator, RegisterAdmin
 import { MongoProfile } from '../services/type';
 import { AdminProfile } from '../services/AdminUsertypes';
 import { deleteSession } from "@/lib/session/session";
+import { ObjectId } from 'mongodb';
 
 
 export async function registerUser(data: MongoProfile) {
@@ -11,7 +12,7 @@ export async function registerUser(data: MongoProfile) {
 }
 
 
-export async function updateUser(id: string, data: MongoProfile) {
+export async function updateUser(id: ObjectId, data: MongoProfile) {
   return await updateUserInMongoDB(id, data);
 }
 
