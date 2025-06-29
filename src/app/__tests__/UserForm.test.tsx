@@ -1,13 +1,14 @@
 // __tests__/MongoUserForm.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import UserForm from '@/app/components/UserForm';
+import { ObjectId } from 'mongodb';
 import type { MongoProfile } from '@/app/services/type';
 
 describe('UserForm (MongoProfile)', () => {
   const mockSubmit = jest.fn();
 
   const defaultProfile: MongoProfile = {
-    _id: '',
+    _id: undefined as unknown as ObjectId,
     name: '',
     locale: 'en',
     hobby: '',
@@ -18,9 +19,9 @@ describe('UserForm (MongoProfile)', () => {
   };
 
   const editProfile: MongoProfile = {
-    _id: '123abc',
+    _id: new ObjectId('507f1f77bcf86cd799439011'),
     name: 'Test User',
-    locale: 'ja',
+    locale: 'en',
     hobby: 'Reading',
     area: 'Tokyo',
     club: 'Science Club',

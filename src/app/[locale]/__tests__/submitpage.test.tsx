@@ -1,37 +1,72 @@
 // __tests__/SubmitPage.test.tsx
-import { render, screen } from '@testing-library/react';
-import HomePage from '@/app/[locale]/submit/page';
-import { getSession } from '@/lib/session/getSession';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import SubmitPage from '@/app/[locale]/submit/page';
+import '@testing-library/jest-dom';
 
-// モック化
-jest.mock('@/lib/session/getSession', () => ({
-  getSession: jest.fn(),
-}));
+// UserForm をモック（onSubmit を呼び出すためのボタンを表示）
+jest.mock('@/app/components/UserForm', () => (props: any) => (
+  <div>
+    <button
+      data-testid="submit-button"
+      onClick={() =>
+        props.onSubmit({
+          _id: '',
+          name: 'Test',
+          locale: 'en',
+          hobby: '',
+          area: '',
+          club: '',
+          part_time_job: '',
+          self_introduction: [],
+        })
+      }
+    >
+      Submit
+    </button>
+  </div>
+));
 
-jest.mock('@/app/components/UserForm', () => {
-  const MockedUserForm = () => (
-    <div data-testid="user-form">Mocked UserForm</div>
-  );
-  MockedUserForm.displayName = 'MockedUserForm';
-  return MockedUserForm;
-});
+// グローバルモック
+global.fetch = jest.fn();
+global.alert = jest.fn();
+global.console.error = jest.fn();
 
 describe('SubmitPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders UserForm and calls getSession', async () => {
-    const mockSession = { user: { name: 'John' } };
-    (getSession as jest.Mock).mockResolvedValue(mockSession);
+  it('正常に送信できた場合、成功メッセージを表示する', async () => {
+    (fetch as jest.Mock).mockResolvedValueOnce({ ok: true });
 
-    render(await HomePage());
+    render(<SubmitPage />);
+    fireEvent.click(screen.getByTestId('submit-button'));
 
-    // セッション関数が呼ばれたか確認
-    expect(getSession).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(global.alert).toHaveBeenCalledWith('プロフィールを登録しました');
+    });
+  });
 
-    // ヘッダーとUserFormの表示確認
-    expect(screen.getByText('User Registration')).toBeInTheDocument();
-    expect(screen.getByTestId('user-form')).toBeInTheDocument();
+  it('API が失敗した場合、エラーメッセージを表示する', async () => {
+    (fetch as jest.Mock).mockResolvedValueOnce({ ok: false });
+
+    render(<SubmitPage />);
+    fireEvent.click(screen.getByTestId('submit-button'));
+
+    await waitFor(() => {
+      expect(global.alert).toHaveBeenCalledWith('登録に失敗しました');
+    });
+  });
+
+  it('fetch が例外を投げた場合、catch が処理される', async () => {
+    (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+
+    render(<SubmitPage />);
+    fireEvent.click(screen.getByTestId('submit-button'));
+
+    await waitFor(() => {
+      expect(global.console.error).toHaveBeenCalled();
+      expect(global.alert).toHaveBeenCalledWith('登録に失敗しました');
+    });
   });
 });

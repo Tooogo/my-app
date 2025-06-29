@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import HomePage from '@/app/[locale]/family/[id]/edit/page'; // ルート構成によって変える
 import { getProfileById } from '@/app/services';
 import { MongoProfile } from '@/app/services/type';
+import { ObjectId } from 'mongodb';
 
 // getProfileByIdをモック
 jest.mock('@/app/services', () => ({
@@ -17,7 +18,7 @@ jest.mock('@/app/components/ParentComponent', () => ({
 
 describe('HomePage (by ID)', () => {
   const mockProfile: MongoProfile = {
-    _id: 'abc123',
+    _id: new ObjectId('507f1f77bcf86cd799439011'),
     name: 'Taro',
     locale: 'ja',
     hobby: 'baseball',

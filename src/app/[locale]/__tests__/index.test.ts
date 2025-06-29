@@ -148,7 +148,7 @@ describe('updateUserInMongoDB', () => {
 
     const { _id, ...data } = mockMongoProfile;
 
-    const result = await updateUserInMongoDB(_id.toString(), data);
+    const result = await updateUserInMongoDB(_id, data);
     expect(result.modifiedCount).toBe(1);
   });
 });

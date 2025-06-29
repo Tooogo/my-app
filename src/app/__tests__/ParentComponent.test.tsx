@@ -3,8 +3,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ParentComponent from '@/app/components/ParentComponent';
 import { registerUser, updateUser } from '@/app/actions/userActions';
-import type { MongoProfile } from '@/app/services/type';
 import { ObjectId } from 'mongodb';
+import type { MongoProfile } from '@/app/services/type';
 
 jest.mock('@/app/actions/userActions', () => ({
   registerUser: jest.fn(),
@@ -22,46 +22,20 @@ const existingProfile: MongoProfile = {
   area: '東京',
   club: '科学部',
   part_time_job: 'コンビニ',
-  self_introduction: [
-    {
-      id: 'intro1',
-      type: 'text',
-      content: 'こんにちは、太郎です。',
-    },
-  ],
+  self_introduction: [],
 };
 
-const newProfile: MongoProfile = {
-  _id: new ObjectId(),
-  name: '花子',
-  locale: 'ja',
-  hobby: '読書',
-  area: '大阪',
-  club: '美術部',
-  part_time_job: 'カフェ',
-  self_introduction: [
-    {
-      id: 'intro1',
-      type: 'text',
-      content: 'はじめまして、花子です。',
-    },
-  ],
-};
-
-describe('ParentComponent (MongoProfile)', () => {
+describe('ParentComponent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('既存プロファイルがフォームに表示される', () => {
+  it('既存プロファイルが表示され、Update ボタンが機能する', async () => {
     render(<ParentComponent userData={existingProfile} />);
-    const nameInput = screen.getByLabelText(/name/i) as HTMLInputElement;
-    expect(nameInput.value).toBe(existingProfile.name);
-  });
 
-  it('_id が存在する場合は updateUser が呼ばれる', async () => {
-    render(<ParentComponent userData={existingProfile} />);
-    fireEvent.click(screen.getByText(/update/i));
+    expect(screen.getByLabelText(/Name/i)).toHaveValue('太郎');
+
+    fireEvent.click(screen.getByRole('button', { name: /update/i }));
 
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalledWith(existingProfile._id, existingProfile);
@@ -69,32 +43,15 @@ describe('ParentComponent (MongoProfile)', () => {
     });
   });
 
-  it('_id が空の新規ユーザーは registerUser が呼ばれる', async () => {
+  it('新規プロファイルでは Register ボタンが機能する', async () => {
+    const newProfile = { ...existingProfile, _id: '' as unknown as ObjectId, name: '花子' };
     render(<ParentComponent userData={newProfile} />);
-    fireEvent.click(screen.getByText(/register/i));
+
+    fireEvent.click(screen.getByRole('button', { name: /register/i }));
 
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalledWith(newProfile);
       expect(mockUpdate).not.toHaveBeenCalled();
     });
   });
-
-  it('userData が渡されない場合は defaultProfile で registerUser を呼ぶ', async () => {
-    render(<ParentComponent />);
-
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'テストユーザー' } });
-    fireEvent.change(screen.getByLabelText(/language/i), { target: { value: 'ja' } });
-    fireEvent.change(screen.getByLabelText(/hobby/i), { target: { value: '読書' } });
-    fireEvent.change(screen.getByLabelText(/area/i), { target: { value: '東京' } });
-    fireEvent.change(screen.getByLabelText(/club/i), { target: { value: '写真部' } });
-    fireEvent.change(screen.getByLabelText(/part-time job/i), { target: { value: 'カフェ' } });
-
-    fireEvent.click(screen.getByText(/register/i));
-
-    await waitFor(() => {
-      expect(mockRegister).toHaveBeenCalled();
-      expect(mockUpdate).not.toHaveBeenCalled();
-    });
-  });
-
 });

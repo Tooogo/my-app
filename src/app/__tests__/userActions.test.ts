@@ -1,5 +1,6 @@
 // __tests__/userAction.test.ts
 
+import { ObjectId } from 'mongodb';
 import {
   registerUser,
   updateUser,
@@ -40,7 +41,7 @@ describe('userAction functions', () => {
   });
 
   it('updateUser calls updateUserInMongoDB', async () => {
-    const id = '123';
+    const id = new ObjectId('507f1f77bcf86cd799439011');
     const mockData = { name: 'updated' };
     (services.updateUserInMongoDB as jest.Mock).mockResolvedValue('updated');
 

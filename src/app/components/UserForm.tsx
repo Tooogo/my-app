@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react';
 import { MongoProfile } from '../services/type';
+import { ObjectId } from 'mongodb';
 import { defaultMongoProfile } from '@/constants/defaultMongoProfile';
 
 
 export default function UserForm({ data, onSubmit }: { data: MongoProfile, onSubmit: (profile: MongoProfile) => Promise<void> }) {
   const [profile, setProfile] = useState<MongoProfile>(data ?? defaultMongoProfile);
-  const isEditMode = data?._id ? true : false;
+  const isEditMode = data?._id instanceof ObjectId;
 
   const handleChange = (field: keyof MongoProfile) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setProfile((prev) => ({ ...prev, [field]: event.target.value }));
