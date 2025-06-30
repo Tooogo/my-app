@@ -1,9 +1,8 @@
+// src/app/layout.tsx
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-// import { Inter } from 'next/font/google';
-// import { useTranslation } from 'next-i18next';
-// import Link from 'next/link'
 import { NextIntlClientProvider, useMessages } from 'next-intl';
 
 const geistSans = Geist({
@@ -22,12 +21,11 @@ export const metadata: Metadata = {
 };
 
 
-
-
 export default function RootLayout({
   children, params: { locale }
 }: Readonly<{
   children: React.ReactNode;
+  params: { locale: string };
 }>) {
   const messages = useMessages();
 
