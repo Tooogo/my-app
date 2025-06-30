@@ -6,7 +6,9 @@ import type { RouteKey } from './lib/routes/keys';
 
 export async function middleware(request: NextRequest) {
   const session = await getSession();
-  console.log('Session:', session);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('Session:', session);
+  }
   const response = NextResponse.next();
   const { pathname } = request.nextUrl;
 

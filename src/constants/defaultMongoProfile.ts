@@ -4,7 +4,7 @@ import { MongoProfile } from '@/app/services/type';
 import { ObjectId } from 'mongodb';
 
 export const defaultMongoProfile: MongoProfile = {
-  _id: new ObjectId(),
+  _id: null as unknown as ObjectId,
   name: '',
   locale: 'en',
   hobby: '',
