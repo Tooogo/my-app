@@ -35,7 +35,7 @@ const textStyling = (block: string): string => {
 export default async function FamilyMember({ params }: {
   params: { id: string, locale: string }
 }) {
-  const { id, locale } = await params; // 修正: awaitを削除
+  const { id, locale } = params;
   const t = await getTranslations('Home');
 
   const profile = await getProfileById(id);

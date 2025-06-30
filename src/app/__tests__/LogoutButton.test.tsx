@@ -4,12 +4,10 @@ import { logoutAdminUser } from '@/app/actions/userActions';
 
 // useRouter の push と refresh をモック
 const pushMock = jest.fn();
-const refreshMock = jest.fn();
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: pushMock,
-    refresh: refreshMock,
   }),
 }));
 
@@ -36,7 +34,6 @@ describe('LogoutButton', () => {
       expect(logoutAdminUser).toHaveBeenCalled();
       expect(alertMock).toHaveBeenCalledWith('ログアウトされました');
       expect(pushMock).toHaveBeenCalledWith('/en');
-      expect(refreshMock).toHaveBeenCalled();
     });
 
     alertMock.mockRestore();
@@ -53,7 +50,6 @@ describe('LogoutButton', () => {
     await waitFor(() => {
       expect(alertMock).toHaveBeenCalledWith('ログアウトに失敗しました');
       expect(pushMock).not.toHaveBeenCalled();
-      expect(refreshMock).toHaveBeenCalled();
     });
 
     alertMock.mockRestore();
@@ -71,7 +67,6 @@ describe('LogoutButton', () => {
     await waitFor(() => {
       expect(alertMock).toHaveBeenCalledWith('エラーが発生しました');
       expect(console.error).toHaveBeenCalled();
-      expect(refreshMock).toHaveBeenCalled();
     });
 
     alertMock.mockRestore();

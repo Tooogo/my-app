@@ -18,8 +18,6 @@ export default function LogoutButton() {
     } catch (error) {
       console.error("ログアウトエラー:", error);
       alert("エラーが発生しました");
-    } finally {
-      router.refresh()
     }
   };
 
