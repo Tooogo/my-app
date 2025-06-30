@@ -76,9 +76,13 @@ export async function Authenticator(data: AdminProfile): Promise<"OK" | "Invalid
     return "Invalid credentials";
   }
 
+  if (!user.role) {
+  console.log("Authentication failed: Missing user role");
+  return "Invalid credentials";
+  }
 
-  await createSession(user._id.toString(), user.role || 'admin'); // セッションを作成
-  console.log("Authentication successful: OK"); // デバッグ用
+  await createSession(user._id.toString(), user.role);
+  console.log("Authentication successful: OK");
   return "OK";
 }
 
