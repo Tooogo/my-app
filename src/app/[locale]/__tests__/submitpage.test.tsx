@@ -1,30 +1,42 @@
 // __tests__/SubmitPage.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SubmitPage from '@/app/[locale]/submit/page';
+import { MongoProfile } from '@/app/services/type';
 import '@testing-library/jest-dom';
+import { ObjectId } from 'mongodb';
+
+
 
 // UserForm をモック（onSubmit を呼び出すためのボタンを表示）
-jest.mock('@/app/components/UserForm', () => (props: any) => (
-  <div>
-    <button
-      data-testid="submit-button"
-      onClick={() =>
-        props.onSubmit({
-          _id: '',
-          name: 'Test',
-          locale: 'en',
-          hobby: '',
-          area: '',
-          club: '',
-          part_time_job: '',
-          self_introduction: [],
-        })
-      }
-    >
-      Submit
-    </button>
-  </div>
-));
+jest.mock('@/app/components/UserForm', () => {
+  const MockUserForm = (props: {
+    data: MongoProfile;
+    onSubmit: (profile: MongoProfile) => Promise<void>;
+  }) => (
+    <div>
+      <button
+        data-testid="submit-button"
+        onClick={() =>
+          props.onSubmit({
+            _id: undefined as unknown as ObjectId,
+            name: 'Test',
+            locale: 'en',
+            hobby: '',
+            area: '',
+            club: '',
+            part_time_job: '',
+            self_introduction: [],
+          })
+        }
+      >
+        Submit
+      </button>
+    </div>
+  );
+  MockUserForm.displayName = 'MockUserForm';
+  return MockUserForm;
+});
+
 
 // グローバルモック
 global.fetch = jest.fn();
