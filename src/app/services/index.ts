@@ -133,7 +133,7 @@ export async function updateUserInMongoDB(
 
   const collection = await getCollection();
   const updateData = { name, locale, hobby, area, club, part_time_job, self_introduction };
-  const result = await collection.updateOne({ _id: ObjectId }, { $set: updateData });
+  const result = await collection.updateOne({ _id: id }, { $set: updateData });
 
   return { modifiedCount: result.modifiedCount };
 }
