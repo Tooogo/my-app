@@ -1,7 +1,7 @@
 import { getProfileById } from '@/app/services';
 import ParentComponent from '@/app/components/ParentComponent';
 
-interface PageProps {
+export type PageProps = {
   params: {
     id: string;
   };
