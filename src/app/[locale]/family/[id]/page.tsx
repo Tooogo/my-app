@@ -32,10 +32,12 @@ const textStyling = (block: string): string => {
 };
 
 // TODO #5 Fetch data from mongodb for specific user & specific lang https://nextjs.org/docs/app/api-reference/functions/use-params
-export default async function FamilyMember({ params }: {
-  params: { id: string, locale: string }
+export default async function FamilyMember(props: { params: Promise<{
+  id: string, locale: string }>
 }) {
-  const { id, locale } = params;
+  const params = await props.params; // Await the promise to get the actual params
+  const id = params.id;
+  const locale = params.locale;
   const t = await getTranslations('Home');
 
   const profile = await getProfileById(id);
