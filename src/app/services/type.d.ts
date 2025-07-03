@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 type SelfIntroduction = {
     id: string;
     type: string;
@@ -15,4 +17,4 @@ export type Profile = {
 };
 
 
-export type MongoProfile = Profile & { _id: string } //TODO #1
+export type MongoProfile = Profile & { _id: ObjectId } //TODO #1

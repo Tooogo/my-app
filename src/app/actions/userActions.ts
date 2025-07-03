@@ -1,11 +1,10 @@
 'use server';
 
-
-import { WritingDataToMongoDB, updateUserInMongoDB, Authenticator, RegisterAdminUser } from '../services';
+import { WritingDataToMongoDB, updateUserInMongoDB, Authenticator, RegisterAdminUser, updateAdminInMongoDB } from '../services';
 import { MongoProfile } from '../services/type';
 import { AdminProfile } from '../services/AdminUsertypes';
-import { deleteSession } from "@/lib/session";
-
+import { deleteSession } from "@/lib/session/session";
+import { ObjectId } from 'mongodb';
 
 
 export async function registerUser(data: MongoProfile) {
@@ -13,13 +12,17 @@ export async function registerUser(data: MongoProfile) {
 }
 
 
-export async function updateUser(id: string, data: MongoProfile) {
+export async function updateUser(id: ObjectId, data: MongoProfile) {
   return await updateUserInMongoDB(id, data);
 }
 
 
 export async function registerAdminUser(data: AdminProfile) {
   return await RegisterAdminUser(data);
+}
+
+export async function updateAdminUser(id: string, data: AdminProfile) {
+  return await updateAdminInMongoDB(id, data);
 }
 
 export async function authenticateUser(data: AdminProfile) {
@@ -29,8 +32,7 @@ export async function authenticateUser(data: AdminProfile) {
 }
 
 export async function logoutAdminUser(): Promise<"OK"> {
-  await deleteSession(); // セッションを削除
-  console.log("Admin user logged out"); // デバッグ用
-  window.location.href = "/en"; // ログアウト後にリダイレクト
-  return "OK";
+  await deleteSession();
+  console.log("Admin user logged out");
+  return "OK"; // ここでは副作用なし
 }

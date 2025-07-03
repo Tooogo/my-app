@@ -32,21 +32,20 @@ const textStyling = (block: string): string => {
 };
 
 // TODO #5 Fetch data from mongodb for specific user & specific lang https://nextjs.org/docs/app/api-reference/functions/use-params
-export default async function FamilyMember({ params }: {
-  params: { id: string, locale: string }
+export default async function FamilyMember(props: { params: Promise<{
+  id: string, locale: string }>
 }) {
-  const { id } = await params; // 修正: awaitを削除
+  const params = await props.params; // Await the promise to get the actual params
+  const id = params.id;
+  const locale = params.locale;
   const t = await getTranslations('Home');
-
-  //const locale = useLocale();
-  //const locale = "ja";
 
   const profile = await getProfileById(id);
   if (!profile) {
-    return <div>{t('profileNotFound')}</div>; // プロフィールが見つからない場合のエラーメッセージ
+    return <div>{t('profileNotFound')}</div>;
   }
 
-  //const profile = locale === 'ja' ? getProfile(Number(params.id)) : getProfile_eng(Number(params.id));
+  //const profile = locale === 'ja' ? getProfile(Number(id)) : getProfile_eng(Number(id));
   let h2Count = 0;  // h2が出てきた回数をカウントする変数
 
   return (
@@ -88,7 +87,7 @@ export default async function FamilyMember({ params }: {
         </ol>
 
         <Link
-          href={`/${params.locale}/family/${params.id}/edit/`}
+          href={`/${locale}/family/${id}/edit/`}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Edit

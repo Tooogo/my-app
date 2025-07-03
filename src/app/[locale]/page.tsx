@@ -1,3 +1,5 @@
+// src/app/[locale]/page.tsx
+
 export default function Home() {
   return (
     <div>
