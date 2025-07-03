@@ -3,8 +3,9 @@ import ParentComponent from '@/app/components/ParentComponent';
 
 // src/app/[locale]/family/[id]/edit/page.tsx
 
-export default async function Page({ params }: { params: { id: string; locale: string } }) {
-  const { id } = params;
+export default async function Page(props: { params: Promise<{id: string, locale: string}> }) {
+  const resolvedParams = await props.params;
+  const id = resolvedParams.id;
   const profile = await getProfileById(id);
 
   return (
