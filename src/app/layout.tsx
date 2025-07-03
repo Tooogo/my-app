@@ -21,12 +21,12 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({
-  children, params: { locale }
-}: Readonly<{
+export default function RootLayout(props:{
   children: React.ReactNode;
   params: { locale: string };
-}>) {
+}) {
+  const params = props.params; // Await the promise to get the actual params
+  const { locale } = params; // localeを取得
   const messages = useMessages();
 
   return (
@@ -35,7 +35,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          {props.children}
         </NextIntlClientProvider>
 
       </body>
