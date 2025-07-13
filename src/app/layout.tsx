@@ -32,7 +32,9 @@ export default async function RootLayout(props: {
 
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        data-testid="layout-body"
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {props.children}
         </NextIntlClientProvider>

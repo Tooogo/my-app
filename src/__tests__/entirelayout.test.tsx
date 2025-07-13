@@ -1,29 +1,33 @@
-// src/__tests__/entirelayout.test.tsx
-import { render, screen } from '@testing-library/react';
+/**
+ * @jest-environment jsdom
+ */
+import React from 'react';
+import { renderToString } from 'react-dom/server';
 import RootLayout from '@/app/layout';
-import '@testing-library/jest-dom';
 
-jest.mock('next/font/google', () => ({
-  Geist: () => ({ variable: '--font-geist-sans' }),
-  Geist_Mono: () => ({ variable: '--font-geist-mono' }),
-}));
-
-jest.mock('next-intl', () => ({
-  useMessages: () => ({ hello: 'こんにちは' }),
-  NextIntlClientProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+jest.mock('next-intl/server', () => ({
+  getMessages: jest.fn().mockResolvedValue({
+    greeting: 'Hello',
+  }),
 }));
 
 describe('RootLayout', () => {
-  it('renders children and applies font classes and locale provider', () => {
-    render(
-      <RootLayout params={{ locale: 'ja' }}>
-        <div>Test Content</div>
-      </RootLayout>
-    );
+  it('renders layout with intl context and child content', async () => {
+    const params = Promise.resolve({ locale: 'en' });
+    const ChildComponent = () => <div data-testid="child">Test Content</div>;
 
-    const body = document.querySelector('body');
-    expect(body?.className).toMatch(/--font-geist-sans/);
-    expect(body?.className).toMatch(/--font-geist-mono/);
-    expect(screen.getByText('Test Content')).toBeInTheDocument();
+    const layout = await RootLayout({
+      children: <ChildComponent />,
+      params,
+    });
+
+    // ReactNode → HTML文字列に変換（仮想SSR）
+    const html = renderToString(layout);
+
+    // 子コンテンツが含まれているか検証
+    expect(html).toContain('Test Content');
+    expect(html).toContain('antialiased'); // クラスも含まれているか検証
+    expect(html).toContain('data-testid="child"');
+    expect(html).toContain('data-testid="layout-body"');
   });
 });

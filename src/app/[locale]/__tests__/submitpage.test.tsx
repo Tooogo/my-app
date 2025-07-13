@@ -1,13 +1,27 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // __tests__/SubmitPage.test.tsx
+
+// ✅ SubmitPage を import する前に defaultMongoProfile をモック
+jest.mock('@/constants/defaultMongoProfile', () => ({
+  defaultMongoProfile: {
+    _id: undefined,
+    name: '',
+    locale: 'ja',
+    hobby: '',
+    area: '',
+    club: '',
+    part_time_job: '',
+    self_introduction: [],
+  },
+}));
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SubmitPage from '@/app/[locale]/submit/page';
 import { MongoProfile } from '@/app/services/type';
 import '@testing-library/jest-dom';
-import { ObjectId } from 'mongodb';
 
-
-
-// UserForm をモック（onSubmit を呼び出すためのボタンを表示）
+// ✅ UserForm をモック
 jest.mock('@/app/components/UserForm', () => {
   const MockUserForm = (props: {
     data: MongoProfile;
@@ -18,7 +32,7 @@ jest.mock('@/app/components/UserForm', () => {
         data-testid="submit-button"
         onClick={() =>
           props.onSubmit({
-            _id: undefined as unknown as ObjectId,
+            _id: undefined as unknown as any,
             name: 'Test',
             locale: 'en',
             hobby: '',
@@ -37,8 +51,7 @@ jest.mock('@/app/components/UserForm', () => {
   return MockUserForm;
 });
 
-
-// グローバルモック
+// ✅ グローバル関数をモック
 global.fetch = jest.fn();
 global.alert = jest.fn();
 global.console.error = jest.fn();

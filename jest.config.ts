@@ -20,9 +20,16 @@ const config: Config = {
   '<rootDir>/lib/mongodb.ts',
   ],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
+    '^@/(.*)$': '<rootDir>/$1', // ✅ src/を追加しない！
   },
-  transformIgnorePatterns: ['/node_modules/(?!jose)'],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  transform: {
+    '^.+\\.ts$': ['ts-jest', { useESM: true }],
+  },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(bson|mongodb|@mongodb-js)/)',
+  ],
+
 };
 
 export default createJestConfig(config);

@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // __tests__/MongoUserForm.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import UserForm from '@/app/components/UserForm';
-import { ObjectId } from 'mongodb';
 import type { MongoProfile } from '@/app/services/type';
 
 describe('UserForm (MongoProfile)', () => {
   const mockSubmit = jest.fn();
 
   const defaultProfile: MongoProfile = {
-    _id: undefined as unknown as ObjectId,
+    _id: undefined as unknown as any,
     name: '',
     locale: 'en',
     hobby: '',
@@ -19,7 +20,7 @@ describe('UserForm (MongoProfile)', () => {
   };
 
   const editProfile: MongoProfile = {
-    _id: new ObjectId('507f1f77bcf86cd799439011'),
+    _id: '507f1f77bcf86cd799439011' as any,
     name: 'Test User',
     locale: 'en',
     hobby: 'Reading',

@@ -1,4 +1,5 @@
-import { ObjectId } from 'mongodb';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   registerUser,
   updateUser,
@@ -31,9 +32,11 @@ describe('userAction functions', () => {
     jest.clearAllMocks();
   });
 
+  const fakeObjectId = '507f1f77bcf86cd799439011';
+
   it('registerUser calls WritingDataToMongoDB', async () => {
     const mockData: MongoProfile = {
-      _id: new ObjectId(),
+      _id: fakeObjectId as any,
       name: 'test',
       locale: 'ja',
       hobby: '',
@@ -51,7 +54,7 @@ describe('userAction functions', () => {
   });
 
   it('updateUser calls updateUserInMongoDB', async () => {
-    const id = new ObjectId('507f1f77bcf86cd799439011');
+    const id = '507f1f77bcf86cd799439011' as any;
     const mockData: MongoProfile = {
       _id: id,
       name: 'updated',
