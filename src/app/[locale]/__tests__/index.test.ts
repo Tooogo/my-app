@@ -10,11 +10,20 @@ import {
   RegisterAdminUser,
   getCurrentAdminProfile,
   updateUserInMongoDB,
-  updateAdminInMongoDB
+  updateAdminInMongoDB,
 } from '@/app/services';
-import { ObjectId } from 'mongodb';
+
 import { getSession } from '@/lib/session/getSession';
 import { MongoProfile } from '@/app/services/type';
+
+// ObjectId をモック（ESMのbson.mjsを避けるため）
+jest.mock('mongodb', () => ({
+  ObjectId: jest.fn().mockImplementation((id?: string) => ({
+    toString: () => id ?? '507f1f77bcf86cd799439099',
+    equals: () => true,
+  })),
+}));
+
 
 jest.mock('@/lib/session/getSession', () => ({
   __esModule: true,
@@ -45,7 +54,7 @@ jest.mock('@/lib/mongodb', () => ({
 }));
 
 const mockMongoProfile: MongoProfile = {
-  _id: new ObjectId(),
+  _id: { toString: () => '507f1f77bcf86cd799439011' } as any,
   name: 'テストユーザー',
   locale: 'ja',
   hobby: '登山',
@@ -69,23 +78,23 @@ describe('getProfiles', () => {
 
 describe('getProfileById', () => {
   it('正常系: IDで正しく取得できる', async () => {
-    const fakeId = '507f1f77bcf86cd799439012' as any;
+    const fakeId = '507f1f77bcf86cd799439012';
     const mockProfile = { _id: fakeId, name: 'X' };
     mockCollection.findOne.mockResolvedValueOnce(mockProfile);
 
-    const result = await getProfileById(fakeId.toString());
+    const result = await getProfileById(fakeId);
     expect(result).toEqual(mockProfile);
   });
 });
 
 describe('getProfile', () => {
   it('正常系: ロケールとIDで正しく取得できる', async () => {
-    const id = '507f1f77bcf86cd799439013' as any;
-    const mockProfiles = [{ _id: id, name: 'Y' }];
+    const id = '507f1f77bcf86cd799439013';
+    const mockProfiles = [{ _id: { toString: () => id }, name: 'Y' }];
     mockCollection.find.mockReturnValueOnce({ toArray: jest.fn().mockResolvedValue(mockProfiles) });
 
-    const result = await getProfile('ja', id.toString());
-    expect(result?._id).toEqual(id);
+    const result = await getProfile('ja', id);
+    expect(result?._id.toString()).toEqual(id);
   });
 });
 
@@ -147,10 +156,11 @@ describe('getCurrentAdminProfile', () => {
   it('正常系: セッションから管理者情報を取得', async () => {
     const mockSession = { userId: '507f1f77bcf86cd799439017' };
     const mockUser = {
-      _id: '507f1f77bcf86cd799439017' as any,
+      _id: mockSession.userId,
       username: 'a',
       email: 'e',
       pass: 'p',
+      role: 'admin',
     };
 
     (getSession as jest.Mock).mockResolvedValueOnce(mockSession);
@@ -158,6 +168,7 @@ describe('getCurrentAdminProfile', () => {
 
     const result = await getCurrentAdminProfile();
     expect(result?.email).toBe('e');
+    expect(result?.role).toBe('admin');
   });
 });
 
@@ -168,6 +179,10 @@ describe('updateUserInMongoDB', () => {
     const { _id, ...data } = mockMongoProfile;
 
     const result = await updateUserInMongoDB(_id as any, data);
+    expect(mockCollection.updateOne).toHaveBeenCalledWith(
+      { _id: _id },
+      { $set: data }
+    );
     expect(result.modifiedCount).toBe(1);
   });
 });
@@ -186,8 +201,10 @@ describe('updateAdminInMongoDB', () => {
     mockCollection.updateOne.mockResolvedValueOnce({ modifiedCount: 1 });
 
     const result = await updateAdminInMongoDB(id, adminProfile);
+    expect(mockCollection.updateOne).toHaveBeenCalledWith(
+      { _id: expect.any(Object) },
+      { $set: expect.objectContaining({ email: 'admin@example.com' }) }
+    );
     expect(result.modifiedCount).toBe(1);
   });
 });
-
-
