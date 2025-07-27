@@ -1,7 +1,5 @@
-// lib/routes/accessMap.ts
-
 import { RouteKey } from './keys';
-import type { Role } from '@/types/auth';
+import { UserRole } from '@/types/auth';
 
 export const ROUTE_PATHS: Record<RouteKey, string | ((id: string) => string)> = {
   EN_SUBMIT: '/en/submit',
@@ -12,11 +10,12 @@ export const ROUTE_PATHS: Record<RouteKey, string | ((id: string) => string)> = 
   JP_FAMILY_EDIT: (id: string) => `/jp/family/${id}/edit/`,
 };
 
-export const ROUTE_ACCESS: Record<RouteKey, Role[]> = {
-  EN_SUBMIT: ['admin', 'user'],
-  EN_MYPAGE: ['admin'],
-  JP_SUBMIT: ['admin', 'user'],
-  JP_MYPAGE: ['admin'],
-  EN_FAMILY_EDIT: ['admin'],
-  JP_FAMILY_EDIT: ['admin'],
+
+export const ROUTE_ACCESS: Record<RouteKey, UserRole[]> = {
+  EN_SUBMIT: [UserRole.Admin, UserRole.User],
+  EN_MYPAGE: [UserRole.Admin],
+  JP_SUBMIT: [UserRole.Admin, UserRole.User],
+  JP_MYPAGE: [UserRole.Admin],
+  EN_FAMILY_EDIT: [UserRole.Admin],
+  JP_FAMILY_EDIT: [UserRole.Admin],
 };
