@@ -3,10 +3,20 @@
 import React, { useState } from 'react';
 import { AdminProfile } from '../services/AdminUsertypes';
 import { defaultAdminProfile } from '@/constants/defaultAdminProfile';
+import { STRINGS } from '@/constants/strings';
 
-export default function UserForm({ data, onSubmit }: { data: AdminProfile, onSubmit: (profile: AdminProfile) => Promise<void> }) {
+type SubmitResult = { modifiedCount: number } | { insertedId: string };
+
+export default function UserForm({
+  data,
+  onSubmit
+}: {
+  data: AdminProfile;
+  onSubmit: (profile: AdminProfile) => Promise<SubmitResult>;
+}) {
   const [profile, setProfile] = useState<AdminProfile>(data ?? defaultAdminProfile);
   const isEditMode = Boolean(profile._id);
+
   const handleChange = (field: keyof AdminProfile) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setProfile((prev) => ({ ...prev, [field]: event.target.value }));
   };
@@ -19,7 +29,7 @@ export default function UserForm({ data, onSubmit }: { data: AdminProfile, onSub
   return (
     <div className="container mt-5">
       <div className="card shadow p-4">
-        <h2 className="text-center mb-4">{isEditMode ? 'Edit Admin Profile' : 'Admin Registration'}</h2>
+        <h2 className="text-center mb-4">{isEditMode ? STRINGS.admin.editTitle : STRINGS.admin.registrationTitle}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="username" className="form-label">Username:</label>
@@ -34,7 +44,7 @@ export default function UserForm({ data, onSubmit }: { data: AdminProfile, onSub
             <input type="password" id="pass" className="form-control" value={profile.pass} onChange={handleChange('pass')} required />
           </div>
           <button type="submit" className="btn btn-primary w-100">
-            {isEditMode ? 'Update' : 'Register'}
+            {isEditMode ? STRINGS.admin.updateButton : STRINGS.admin.registerButton}
           </button>
         </form>
       </div>

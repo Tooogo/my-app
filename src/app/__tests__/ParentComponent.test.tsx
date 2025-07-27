@@ -4,17 +4,23 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ParentComponent from '@/app/components/ParentComponent';
 import { registerUser, updateUser } from '@/app/actions/userActions';
 import type { MongoProfile } from '@/app/services/type';
+import { ObjectId } from 'mongodb';
 
 jest.mock('@/app/actions/userActions', () => ({
   registerUser: jest.fn(),
   updateUser: jest.fn(),
 }));
 
-const mockRegister = registerUser as jest.Mock;
-const mockUpdate = updateUser as jest.Mock;
+const mockRegister = registerUser as jest.MockedFunction<typeof registerUser>;
+const mockUpdate = updateUser as jest.MockedFunction<typeof updateUser>;
+
+// jestではESMであるObjectIdを直接扱えないため、モック関数を作成
+function createMockObjectId(id: string = '507f1f77bcf86cd799439011'): ObjectId {
+  return { toString: () => id } as unknown as ObjectId;
+}
 
 const existingProfile: MongoProfile = {
-  _id: '507f1f77bcf86cd799439011' as any,
+  _id: createMockObjectId(),
   name: '太郎',
   locale: 'ja',
   hobby: 'サッカー',

@@ -28,6 +28,5 @@ describe('RootLayout', () => {
     expect(html).toContain('Test Content');
     expect(html).toContain('antialiased'); // クラスも含まれているか検証
     expect(html).toContain('data-testid="child"');
-    expect(html).toContain('data-testid="layout-body"');
   });
 });

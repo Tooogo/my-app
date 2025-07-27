@@ -8,10 +8,11 @@ export default function LogoutButton() {
 
   const handleLogout = async () => {
     try {
-      const result = await logoutAdminUser();
-      if (result === "OK") {
+      const { status, redirectTo } = await logoutAdminUser();
+
+      if (status === "OK") {
         alert("ログアウトされました");
-        router.push("/en");
+        router.replace(redirectTo);
       } else {
         alert("ログアウトに失敗しました");
       }

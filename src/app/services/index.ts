@@ -8,6 +8,7 @@ import { ObjectId } from 'mongodb'
 import argon2 from 'argon2';
 import { createSession } from "@/lib/session/session";
 import { getSession } from "@/lib/session/getSession";
+import { UserRole } from "@/types/auth";
 
 function getDatabase() {
   return client.db(DATABASE);
@@ -47,7 +48,7 @@ export async function getProfileWithNameAndID(locale: string): Promise<{ _id: Ob
 
 export async function WritingDataToMongoDB(data: MongoProfile): Promise<{ insertedId: string }> {
   const { name, locale, hobby, area, club, part_time_job, self_introduction, _id } = data;
-
+  console.log("Writing data to MongoDB:", { name, locale, hobby, area, club, part_time_job, self_introduction, _id });
   const collection = await getCollection();
   const result = await collection.insertOne({ name, locale, hobby, area, club, part_time_job, self_introduction, _id });
 
@@ -103,8 +104,8 @@ export async function RegisterAdminUser(data: AdminProfile): Promise<{ insertedI
   const result = await collection.insertOne({
     username,
     email,
-    pass: hashedPassword,  // ハッシュ化したパスワードを保存
-    role: 'admin'
+    pass: hashedPassword,
+    role: UserRole.Admin
   });
 
   return { insertedId: result.insertedId.toString() };
@@ -124,7 +125,7 @@ export async function getCurrentAdminProfile(): Promise<AdminProfile | null> {
     username: user.username,
     email: user.email,
     pass: user.pass,
-    role: user.role || 'admin'
+    role: user.role || UserRole.Admin
   };
 }
 
@@ -138,7 +139,9 @@ export async function updateUserInMongoDB(
   const collection = await getCollection();
   const updateData = { name, locale, hobby, area, club, part_time_job, self_introduction };
   const result = await collection.updateOne({ _id: id }, { $set: updateData });
-
+  console.log("updateUserInMongoDB received _id:", id);
+  console.log("Type of id:", typeof id);
+  
   return { modifiedCount: result.modifiedCount };
 }
 
@@ -151,7 +154,7 @@ export async function updateAdminInMongoDB(id: string, data: AdminProfile): Prom
     username: username,
     email: email,
     pass: pass,
-    role: 'admin'
+    role: UserRole.Admin
   };
 
   const result = await collection.updateOne(

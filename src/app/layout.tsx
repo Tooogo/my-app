@@ -1,5 +1,3 @@
-// src/app/layout.tsx
-
 import type { Metadata } from "next";
 import { getMessages } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -33,7 +31,6 @@ export default async function RootLayout(props: {
   return (
     <html lang="en">
       <body
-        data-testid="layout-body"
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {props.children}

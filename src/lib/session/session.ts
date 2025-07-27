@@ -61,7 +61,13 @@ export async function clearSession() {
 }
 
 
-export async function deleteSession() {
-    const cookieStore = await cookies()
-    cookieStore.delete('session')
+export async function deleteSession(): Promise<boolean> {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete('session');
+    return true; // ✅ 削除成功
+  } catch (error) {
+    console.error('セッション削除に失敗:', error);
+    return false; // ✅ 削除失敗
   }
+}

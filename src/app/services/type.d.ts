@@ -17,4 +17,4 @@ export type Profile = {
 };
 
 
-export type MongoProfile = Profile & { _id: ObjectId } //TODO #1
+export type MongoProfile = Profile & { _id?: ObjectId | null } //TODO #1
