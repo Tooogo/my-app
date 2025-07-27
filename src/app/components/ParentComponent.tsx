@@ -12,12 +12,14 @@ export default function ParentComponent({ userData }: { userData?: MongoProfile 
   console.log("Type of profile._id:", typeof profile._id);
   const handleSubmit = async (profile: MongoProfile) => {
     if (profile._id) {
-      await updateUser(profile._id, profile);
+      const id = typeof profile._id === 'string' ? profile._id : profile._id.toString();
+      await updateUser(id, profile);
     } else {
       await registerUser(profile);
       console.log("New user registered with profile._id:", profile._id);
     }
   };
+
 
   return <UserForm data={profile} onSubmit={handleSubmit} />;
 }
