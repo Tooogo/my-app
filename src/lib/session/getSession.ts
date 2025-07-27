@@ -1,13 +1,14 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import { JWTPayload, jwtVerify, JWTHeaderParameters } from 'jose';
+import { UserRole } from '@/types/auth';
 export { jwtVerify };
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'default_secret');
 
 interface SessionPayload extends JWTPayload {
   userId: string;
-  role: 'admin' | 'user';
+  role: UserRole;
   expiresAt: string;
 }
 
