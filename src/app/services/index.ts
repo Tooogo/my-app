@@ -31,12 +31,19 @@ export async function getProfileById(id: string): Promise<MongoProfile> {
   return await getCollection().findOne({ _id: new ObjectId(id) }) as MongoProfile;
 }
 
-// locale に応じた1件のプロフィールを取得する関数
 export async function getProfile(locale: string, id: string): Promise<MongoProfile | null> {
-  const profiles = await getProfiles(locale);  // profilesの取得
-  console.log(profiles)
-  return profiles.find(profile => profile._id.toString() === id) || null;  // _idで検索して一致するものを返す
+  const profiles = await getProfiles(locale);
+  console.log(profiles);
+
+  return (
+    profiles.find((profile) => {
+      if (!profile._id) return false;
+      const profileId = typeof profile._id === 'string' ? profile._id : profile._id.toString();
+      return profileId === id;
+    }) || null
+  );
 }
+
 
 export async function getProfileWithNameAndID(locale: string): Promise<{ _id: ObjectId, name: string }[]> {
   return await getCollection()
@@ -49,10 +56,13 @@ export async function getProfileWithNameAndID(locale: string): Promise<{ _id: Ob
 export async function WritingDataToMongoDB(data: MongoProfile): Promise<{ insertedId: string }> {
   const { name, locale, hobby, area, club, part_time_job, self_introduction, _id } = data;
   console.log("Writing data to MongoDB:", { name, locale, hobby, area, club, part_time_job, self_introduction, _id });
+
   const collection = await getCollection();
   const result = await collection.insertOne({ name, locale, hobby, area, club, part_time_job, self_introduction, _id });
 
-  return { insertedId: result.insertedId.toString() };
+  const insertedId = result.insertedId ? result.insertedId.toString() : ''; // ✅ nullチェック
+
+  return { insertedId };
 }
 
 
