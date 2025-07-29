@@ -5,6 +5,8 @@ import { MongoProfile } from '../services/type';
 import { AdminProfile } from '../services/AdminUsertypes';
 import { deleteSession } from "@/lib/session/session";
 import { ObjectId } from 'mongodb';
+import type { LogoutResult } from '@/types/auth';
+
 
 
 export async function registerUser(data: MongoProfile) {
@@ -13,9 +15,9 @@ export async function registerUser(data: MongoProfile) {
 
 export async function updateUser(id: string, data: MongoProfile) {
   const objectId = new ObjectId(id);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { _id: _, ...rest }  = data;
-  return await updateUserInMongoDB(objectId, rest);
+  const updateDocument = { ...data };
+  delete updateDocument._id;
+  return await updateUserInMongoDB(objectId, updateDocument);
 }
 
 export async function registerAdminUser(data: AdminProfile) {
@@ -32,11 +34,13 @@ export async function authenticateUser(data: AdminProfile) {
   return login;
 }
 
-export async function logoutAdminUser(): Promise<{ status: "OK" | "ERROR"; redirectTo: string }> {
+export async function logoutAdminUser(): Promise<LogoutResult> {
   const success = await deleteSession();
+
   if (!success) {
     return { status: "ERROR", redirectTo: "/not-found" };
   }
+
   console.log("Admin user logged out");
   return { status: "OK", redirectTo: "/en" };
 }

@@ -16,7 +16,7 @@ const mockUpdate = updateUser as jest.MockedFunction<typeof updateUser>;
 
 // jestではESMであるObjectIdを直接扱えないため、モック関数を作成
 function createMockObjectId(id: string = '507f1f77bcf86cd799439011'): ObjectId {
-  return { toString: () => id } as unknown as ObjectId;
+  return { toString: () => id } as ObjectId;
 }
 
 const existingProfile: MongoProfile = {
@@ -43,7 +43,7 @@ describe('ParentComponent', () => {
     fireEvent.click(screen.getByRole('button', { name: /update/i }));
 
     await waitFor(() => {
-      expect(mockUpdate).toHaveBeenCalledWith(existingProfile._id, existingProfile);
+      expect(mockUpdate).toHaveBeenCalledWith('507f1f77bcf86cd799439011', existingProfile);
       expect(mockRegister).not.toHaveBeenCalled();
     });
   });
