@@ -5,6 +5,7 @@ import { MongoProfile } from '../services/type';
 import { AdminProfile } from '../services/AdminUsertypes';
 import { deleteSession } from "@/lib/session/session";
 import { ObjectId } from 'mongodb';
+import { LogoutStatus } from '@/types/auth';
 import type { LogoutResult } from '@/types/auth';
 
 
@@ -16,6 +17,8 @@ export async function registerUser(data: MongoProfile) {
 export async function updateUser(id: string, data: MongoProfile) {
   const objectId = new ObjectId(id);
   const { _id, ...updateDocument } = data;
+  console.log("Updating user with _id:", _id);
+
   return await updateUserInMongoDB(objectId, updateDocument);
 
 }
@@ -38,9 +41,9 @@ export async function logoutAdminUser(): Promise<LogoutResult> {
   const success = await deleteSession();
 
   if (!success) {
-    return { status: "ERROR", redirectTo: "/not-found" };
+    return { status: LogoutStatus.ERROR, redirectTo: "/not-found" };
   }
 
   console.log("Admin user logged out");
-  return { status: "OK", redirectTo: "/en" };
+  return { status: LogoutStatus.OK, redirectTo: "/en" };
 }
