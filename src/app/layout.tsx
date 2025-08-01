@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
+import { getMessages } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-// import { Inter } from 'next/font/google';
-// import { useTranslation } from 'next-i18next';
-// import Link from 'next/link'
-import { NextIntlClientProvider, useMessages } from 'next-intl';
+import { NextIntlClientProvider } from 'next-intl';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,24 +20,21 @@ export const metadata: Metadata = {
 };
 
 
-
-
-export default function RootLayout({
-  children, params: { locale }
-}: Readonly<{
+export default async function RootLayout(props: {
   children: React.ReactNode;
-}>) {
-  const messages = useMessages();
+  params: Promise<{ locale: string }>;
+}) {
+  const resolvedParams = await props.params;
+  const { locale } = resolvedParams;
+  const messages = await getMessages();
 
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          {props.children}
         </NextIntlClientProvider>
-
       </body>
     </html>
   );

@@ -2,30 +2,24 @@
 
 import UserForm from './UserForm';
 import { MongoProfile } from '../services/type';
+import { defaultMongoProfile } from '@/constants/defaultMongoProfile';
 import { registerUser, updateUser } from '../actions/userActions';
 
 
-const defaultProfile: MongoProfile = {
-  _id: '',
-  name: '',
-  locale: 'en',
-  hobby: '',
-  area: '',
-  club: '',
-  part_time_job: '',
-  self_introduction: [],
-};
-
 export default function ParentComponent({ userData }: { userData?: MongoProfile }) {
-  // `userData` が `undefined` の場合は `defaultProfile` を使う
-  const profile = userData ?? defaultProfile;
+  const profile = userData ?? defaultMongoProfile;
+  console.log("Submitting profile._id:", profile._id);
+  console.log("Type of profile._id:", typeof profile._id);
   const handleSubmit = async (profile: MongoProfile) => {
     if (profile._id) {
-      await updateUser(profile._id, profile);
+      const id = typeof profile._id === 'string' ? profile._id : profile._id.toString();
+      await updateUser(id, profile);
     } else {
       await registerUser(profile);
+      console.log("New user registered with profile._id:", profile._id);
     }
   };
+
 
   return <UserForm data={profile} onSubmit={handleSubmit} />;
 }

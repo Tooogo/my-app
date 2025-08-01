@@ -1,13 +1,18 @@
-"use client"; // クライアントコンポーネントとして動作
+"use client";
 
+import { useRouter } from 'next/navigation';
 import { logoutAdminUser } from "../actions/userActions";
 
 export default function LogoutButton() {
+  const router = useRouter();
+
   const handleLogout = async () => {
     try {
-      const result = await logoutAdminUser();
-      if (result === "OK") {
+      const { status, redirectTo } = await logoutAdminUser();
+
+      if (status === "OK") {
         alert("ログアウトされました");
+        router.replace(redirectTo);
       } else {
         alert("ログアウトに失敗しました");
       }

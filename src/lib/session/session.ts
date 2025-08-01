@@ -1,11 +1,13 @@
 import 'server-only'
 import { cookies } from 'next/headers'
 import { JWTPayload, SignJWT, jwtVerify } from 'jose'
+export { jwtVerify };
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'default_secret');  // セキュアなキーを使用
 
 interface SessionPayload extends JWTPayload {
     userId: string
+    role: 'admin' | 'user'
     expiresAt: Date
   }
 
@@ -32,9 +34,9 @@ try {
 }
 
 // セッションを作成しクッキーに保存する関数
-export async function createSession(userId: string) {
+export async function createSession(userId: string, role: 'admin' | 'user') {
 const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7日間有効
-const session = await encrypt({ userId, expiresAt })
+const session = await encrypt({ userId, role, expiresAt })
 
 const cookieStore = await cookies()
 cookieStore.set('session', session, {
@@ -46,19 +48,6 @@ cookieStore.set('session', session, {
 })
 }
 
-
-export async function getSession() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('session')?.value
-  if (!token) return null
-
-  try {
-    const { payload } = await jwtVerify(token, SECRET_KEY)
-    return payload
-  } catch {
-    return null
-  }
-}
 
 export async function clearSession() {
   const cookieStore = await cookies()
@@ -72,7 +61,13 @@ export async function clearSession() {
 }
 
 
-export async function deleteSession() {
-    const cookieStore = await cookies()
-    cookieStore.delete('session')
+export async function deleteSession(): Promise<boolean> {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete('session');
+    return true; // ✅ 削除成功
+  } catch (error) {
+    console.error('セッション削除に失敗:', error);
+    return false; // ✅ 削除失敗
   }
+}

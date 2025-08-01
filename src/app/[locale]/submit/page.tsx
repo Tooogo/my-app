@@ -1,11 +1,10 @@
-// app/page.js
-import UserForm from '../../components/UserForm';
+import ParentComponent from '@/app/components/ParentComponent';
 
 export default function HomePage() {
   return (
     <div>
       <h1>User Registration</h1>
-      <UserForm />
+      <ParentComponent />
     </div>
   );
 }
