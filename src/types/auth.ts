@@ -3,7 +3,12 @@ export enum UserRole  {
     User = 'user',
 };
 
+export enum LogoutStatus {
+  OK = "OK",
+  ERROR = "ERROR",
+}
+
 export interface LogoutResult {
-  status: "OK" | "ERROR";
+  status: LogoutStatus;
   redirectTo: string;
 }

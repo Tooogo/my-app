@@ -15,9 +15,9 @@ export async function registerUser(data: MongoProfile) {
 
 export async function updateUser(id: string, data: MongoProfile) {
   const objectId = new ObjectId(id);
-  const updateDocument = { ...data };
-  delete updateDocument._id;
+  const { _id, ...updateDocument } = data;
   return await updateUserInMongoDB(objectId, updateDocument);
+
 }
 
 export async function registerAdminUser(data: AdminProfile) {

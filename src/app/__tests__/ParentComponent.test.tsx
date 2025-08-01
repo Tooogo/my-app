@@ -42,10 +42,11 @@ describe('ParentComponent', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /update/i }));
 
-    await waitFor(() => {
-      expect(mockUpdate).toHaveBeenCalledWith('507f1f77bcf86cd799439011', existingProfile);
-      expect(mockRegister).not.toHaveBeenCalled();
-    });
+  await waitFor(() => {
+    expect(mockUpdate).toHaveBeenCalledWith('507f1f77bcf86cd799439011', existingProfile);
+    expect(mockRegister).not.toHaveBeenCalled();
+  });
+
   });
 
   it('新規プロファイルでは Register ボタンが機能する', async () => {
