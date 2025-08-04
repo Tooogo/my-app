@@ -30,6 +30,7 @@ export async function middleware(request: NextRequest) {
   if (!allowed.includes(session.role)) {
     return NextResponse.redirect(new URL('/not-found', request.url));
   }
+
   // ログインしていて権限がある場合はそのまま通過
   return response;
 }
