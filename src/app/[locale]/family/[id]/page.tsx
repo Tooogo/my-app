@@ -1,10 +1,8 @@
-// src/app/page.tsx
-// 'use client';
-
 import Image from "next/image";
 import { getTranslations } from 'next-intl/server'
 import { getProfileById } from "@/app/services";
 import Link from "next/link";
+// import { edgeLogger } from "@/lib/logger.edge";
 
 
 const headerFormatting = (block: string, h2Count: number): string => {
@@ -41,9 +39,6 @@ export default async function FamilyMember(props: { params: Promise<{
   const t = await getTranslations('Home');
 
   const profile = await getProfileById(id);
-  if (!profile) {
-    return <div>{t('profileNotFound')}</div>;
-  }
 
   //const profile = locale === 'ja' ? getProfile(Number(id)) : getProfile_eng(Number(id));
   let h2Count = 0;  // h2が出てきた回数をカウントする変数
