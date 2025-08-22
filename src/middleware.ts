@@ -7,63 +7,95 @@ import { AuthStatus } from './types/auth';
 
 export async function middleware(request: NextRequest) {
   const start = performance.now();
-  const session = await getSession();
   const { pathname } = request.nextUrl;
-  const role = session?.role || 'guest';
   const userAgent = request.headers.get('user-agent') ?? 'unknown';
   const referer = request.headers.get('referer') ?? 'none';
   const acceptLanguage = request.headers.get('accept-language') ?? 'unknown';
   const forwardedFor = request.headers.get('x-forwarded-for') ?? '';
   const ip = forwardedFor.split(',')[0]?.trim() || 'unknown';
+  const reqHeaders = new Headers(request.headers);
+  reqHeaders.set('x-pathname', pathname);
 
-  edgeLogger('Middleware Access Start', {
-    url: pathname,
-    method: request.method,
-    role,
-    ip,
-    user_agent: userAgent,
-    referer,
-    accept_language: acceptLanguage,
-  });
 
-  const matchedKey = (Object.keys(ROUTE_PATHS) as RouteKey[]).find((key) => {
-    const raw = typeof ROUTE_PATHS[key] === 'function' ? ROUTE_PATHS[key](':id') : ROUTE_PATHS[key];
-    return new RegExp('^' + raw.replace(':id', '[^/]+') + '/?$').test(pathname);
-  });
+  try {
 
-  let response: NextResponse;
-  let status = 200;
+    /*
+    // テスト用のエラー強制発生（開発時のみ） --- IGNORE ---
+    if (process.env.NODE_ENV !== 'production' && request.headers.get('x-test-mw-error') === '1') {
+    throw new Error('mw-forced-error');
+    }
+    */
 
-  if (!matchedKey) {
-    response = NextResponse.next();
-  } else if (!session) {
-    response = NextResponse.redirect(new URL('/login', request.url));
-    status = 302;
-  } else {
-    const allowed = ROUTE_ACCESS[matchedKey];
-    if (!allowed.includes(session.role)) {
-      response = NextResponse.redirect(new URL('/not-found', request.url));
+    const session = await getSession();
+    const role = session?.role || 'guest';
+
+    edgeLogger('Middleware Access Start', {
+      url: pathname,
+      method: request.method,
+      role,
+      ip,
+      user_agent: userAgent,
+      referer,
+      accept_language: acceptLanguage,
+    });
+
+    const matchedKey = (Object.keys(ROUTE_PATHS) as RouteKey[]).find((key) => {
+      const raw = typeof ROUTE_PATHS[key] === 'function' ? ROUTE_PATHS[key](':id') : ROUTE_PATHS[key];
+      return new RegExp('^' + raw.replace(':id', '[^/]+') + '/?$').test(pathname);
+    });
+
+    let response: NextResponse;
+    let status = 200;
+
+    if (!matchedKey) {
+      response = NextResponse.next({ request: { headers: reqHeaders } });
+    } else if (!session) {
+      response = NextResponse.redirect(new URL('/login', request.url));
       status = 302;
     } else {
-      response = NextResponse.next();
+      const allowed = ROUTE_ACCESS[matchedKey];
+      if (!allowed.includes(session.role)) {
+        response = NextResponse.redirect(new URL('/not-found', request.url));
+        status = 302;
+      } else {
+        response = NextResponse.next({ request: { headers: reqHeaders } });
+      }
     }
+
+    const duration = performance.now() - start;
+
+    edgeLogger('Middleware Completed', {
+      url: pathname,
+      method: request.method,
+      status,
+      role,
+      auth: session ? AuthStatus.authenticated : AuthStatus.unauthenticated,
+      duration_ms: duration,
+      ip,
+      user_agent: userAgent,
+      referer,
+      accept_language: acceptLanguage,
+    });
+    return response;
+  } catch (err) {
+    
+    const duration = performance.now() - start;
+    await edgeLogger('Middleware Exception', {
+      url: pathname,
+      method: request.method,
+      status: 500,
+      role: 'guest',
+      auth: AuthStatus.unauthenticated,
+      duration_ms: duration,
+      ip,
+      user_agent: userAgent,
+      referer,
+      accept_language: acceptLanguage,
+      error_message: err instanceof Error ? err.message : String(err),
+    });
+
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
-
-  const duration = performance.now() - start;
-
-  edgeLogger('Middleware Completed', {
-    url: pathname,
-    method: request.method,
-    status,
-    role,
-    auth: session ? AuthStatus.authenticated : AuthStatus.unauthenticated,
-    duration_ms: duration,
-    ip,
-    user_agent: userAgent,
-    referer,
-    accept_language: acceptLanguage,
-  });
-  return response;
 }
 
 export const config = { matcher: ['/:path*'] };
