@@ -1,19 +1,11 @@
-// src/app/components/LayoutContent.tsx
-// ※ サーバーコンポーネントにするので "use client" は書かない
-
+// ※ "use client" は書かない（Server Component）
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
+import LogoutButton from '../components/LogoutButton'; // ←通常インポートに変更（Client Component）
 
 export type Profile = {
   _id: string;
   name: string;
 };
-
-// LogoutButton はクライアント側でのみ読み込み（SSR 無効化）
-const LogoutButton = dynamic(() => import('../components/LogoutButton'), {
-  ssr: false,
-  loading: () => null, // 初期描画をブロックしない
-});
 
 export default function LayoutContent({
   locale,
@@ -34,7 +26,7 @@ export default function LayoutContent({
               key={profile._id}
               href={`/${locale}/family/${profile._id}`}
               className="me-3"
-              prefetch // 初期表示後の先読み（デフォルト有効だが明示）
+              prefetch
             >
               {profile.name}
             </Link>
@@ -47,7 +39,7 @@ export default function LayoutContent({
           <Link href={`/${locale}/submit/`} className="btn btn-primary me-3">
             Registration
           </Link>
-          <LogoutButton />
+          <LogoutButton /> {/* ← ここだけClient Component。SSRはされず、後で水和されます */}
         </div>
       </nav>
       {children}
