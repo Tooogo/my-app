@@ -16,6 +16,13 @@ export async function middleware(request: NextRequest) {
   const reqHeaders = new Headers(request.headers);
   reqHeaders.set('x-pathname', pathname);
 
+    // ✅ OK: Web Crypto API（Edge対応）
+  const requestId = request.headers.get('x-request-id') ?? crypto.randomUUID();
+  reqHeaders.set('x-request-id', requestId);
+
+  const res = NextResponse.next({ request: { headers: reqHeaders } });
+  res.headers.set('x-request-id', requestId);
+
 
   try {
 
