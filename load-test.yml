@@ -1,42 +1,48 @@
 config:
-  # This is a test server run by team Artillery
-  # It's designed to be highly scalable
   target: http://localhost:3000
+  # 合計 ~3分。現実的な「普段→混み合う→ちょいスパイク→落ち着く」カーブ
   phases:
-    - duration: 20
-      # 最初に1秒あたり1リクエストから始めて
-      arrivalRate: 1
-      # そこからduration time (20秒)かけて1秒あたり5リクエストまで増やす
-      rampTo: 5
-      name: Warm up phase
-    - duration: 20
-      arrivalRate: 5
-      rampTo: 10
-      name: Ramp up load
+    # 1) ふつうの利用（緩やかに上げる）
+    - duration: 15
+      arrivalRate: 1         # 1 req/s から
+      rampTo: 6              # 45秒かけて 6 req/s へ
+      name: Normal ramp
+
+    # 2) ちょい混雑の維持（プレート）
+    - duration: 10
+      arrivalRate: 6         # 一定レートで様子見
+      name: Busy plateau
+
+    # 3) ランチタイムの小スパイク（短時間の山）
+    - duration: 5
+      arrivalRate: 6
+      rampTo: 15             # 6→15 req/s に小スパイク
+      name: Lunch spike
+
+    # 4) 少し落ち着く（段階的に下げる）
     - duration: 10
       arrivalRate: 10
-      rampTo: 30
-      name: Spike phase
-  # Load & configure a couple of useful plugins
-  # https://artillery.io/docs/reference/extensions
+      rampTo: 6
+      name: Cool down
+
+    # 5) 余韻（ふつうの負荷に戻す）
+    - duration: 5
+      arrivalRate: 3
+      name: Back to normal
+
   plugins:
     ensure:
       thresholds:
-        # 99%のリクエストが何ms以内に完了すれば合格とするか閾値を決める
-        # 例えばリクエストを100回送ったときにレスポンスの速度が速い順で並べて99番目の値が2000ms以内であれば合格
+        - http.response_time.p95: 2000   # まずは現実的なしきい値
         - http.response_time.p99: 3000
-        # 95%のリクエストが何ms以内に完了すれば合格とするか閾値を決める
-        - http.response_time.p95: 2500
     apdex:
-      threshold: 1000
+      threshold: 800                     # 0.8秒以内を“満足”として開始
     metrics-by-endpoint: {}
+
 scenarios:
-  - flow:
-      - loop:
-          # 各URLに対して順番にアクセス
-          - get:
-              url: '/ja'
-          - get:
-              url: '/en'
-        # 何回ループするか
-        count: 1
+  - name: browse-ja-en
+    flow:
+      - get: { url: "/ja" }
+      - think: 1.5..2.5     # 人間の滞在（1.5〜2.5秒でランダム）
+      - get: { url: "/en" }
+      - think: 1..2
