@@ -1,5 +1,14 @@
 config:
   target: http://localhost:3000
+  http:
+    followRedirects: true
+    timeout: 10000
+    headers:
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+      Accept-Language: "ja,en;q=0.8"
+      User-Agent: "Mozilla/5.0"
+      X-Test-Run: "artillery-local"   # ← 後でDatadogで絞り込む用
+
   # 合計 ~3分。現実的な「普段→混み合う→ちょいスパイク→落ち着く」カーブ
   phases:
     # 1) ふつうの利用（緩やかに上げる）
@@ -43,6 +52,6 @@ scenarios:
   - name: browse-ja-en
     flow:
       - get: { url: "/ja" }
-      - think: 1.5..2.5     # 人間の滞在（1.5〜2.5秒でランダム）
+      - think: 2
       - get: { url: "/en" }
-      - think: 1..2
+      - think: 2

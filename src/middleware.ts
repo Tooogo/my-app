@@ -51,13 +51,14 @@ export async function middleware(request: NextRequest) {
       return new RegExp('^' + raw.replace(':id', '[^/]+') + '/?$').test(pathname);
     });
 
+
     let response: NextResponse;
     let status = 200;
 
     if (!matchedKey) {
       response = NextResponse.next({ request: { headers: reqHeaders } });
     } else if (!session) {
-      response = NextResponse.redirect(new URL('/login', request.url));
+      response = NextResponse.redirect(new URL(`/login`, request.url));
       status = 302;
     } else {
       const allowed = ROUTE_ACCESS[matchedKey];
