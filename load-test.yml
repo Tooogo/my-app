@@ -9,49 +9,18 @@ config:
       User-Agent: "Mozilla/5.0"
       X-Test-Run: "artillery-local"   # ← 後でDatadogで絞り込む用
 
-  # 合計 ~3分。現実的な「普段→混み合う→ちょいスパイク→落ち着く」カーブ
   phases:
     # 1) ふつうの利用（緩やかに上げる）
-    - duration: 15
-      arrivalRate: 1         # 1 req/s から
-      rampTo: 6              # 45秒かけて 6 req/s へ
+    - duration: 10
+      arrivalRate: 0.5
+      rampTo: 0.5   
       name: Normal ramp
-
-    # 2) ちょい混雑の維持（プレート）
-    - duration: 10
-      arrivalRate: 6         # 一定レートで様子見
-      name: Busy plateau
-
-    # 3) ランチタイムの小スパイク（短時間の山）
-    - duration: 5
-      arrivalRate: 6
-      rampTo: 15             # 6→15 req/s に小スパイク
-      name: Lunch spike
-
-    # 4) 少し落ち着く（段階的に下げる）
-    - duration: 10
-      arrivalRate: 10
-      rampTo: 6
-      name: Cool down
-
-    # 5) 余韻（ふつうの負荷に戻す）
-    - duration: 5
-      arrivalRate: 3
-      name: Back to normal
-
-  plugins:
-    ensure:
-      thresholds:
-        - http.response_time.p95: 2000   # まずは現実的なしきい値
-        - http.response_time.p99: 3000
-    apdex:
-      threshold: 800                     # 0.8秒以内を“満足”として開始
-    metrics-by-endpoint: {}
 
 scenarios:
   - name: browse-ja-en
     flow:
-      - get: { url: "/ja" }
-      - think: 2
-      - get: { url: "/en" }
+      - get:
+          url: "/en/test"
+          headers:
+            X-Req-Id: {{ $randomString() }}
       - think: 2

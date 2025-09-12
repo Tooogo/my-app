@@ -1,18 +1,7 @@
-import { getRequestConfig } from "next-intl/server";
-import { routing } from "./routing";
+// src/i18n/request.ts
+import {getRequestConfig} from 'next-intl/server';
 
-
-
-export default getRequestConfig(async ({ requestLocale }) => {
-  let locale = await requestLocale;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!locale || !routing.locales.includes(locale as any)) {
-    locale = routing.defaultLocale;
-  }
-
-  return {
-    locale,
-    messages: (await import(`../../messages/${locale}.json`)).default,
-  };
-});
+export default getRequestConfig(async ({locale}) => ({
+  // 必要に応じて default/fallback を入れてもOK
+  messages: (await import(`../messages/${locale}.json`)).default
+}));

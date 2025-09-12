@@ -1,11 +1,15 @@
 // src/app/[locale]/page.tsx
+export const dynamicParams = false;
+export function generateStaticParams() {
+  // routing.ts に合わせて列挙
+  return [{ locale: "en" }, { locale: "ja" }];
+}
 
 export default function Home() {
   return (
-    <div>
-      <h1>Please access each site from the button on the top left</h1>
-      <p>Or, if you haven&apos;t registered yet, please click the registration button on the rop right</p>
-
-    </div>
-  )
+    <main>
+      <h1>OK: locale page</h1>
+      <p>This is /[locale] page.</p>
+    </main>
+  );
 }
