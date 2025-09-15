@@ -1,10 +1,13 @@
-// src/app/[locale]/layout.tsx
-export const dynamicParams = true;
-export function generateStaticParams() {
-  // ここに列挙したロケールの配下ルート（/test などを含む）が“存在確定”します
-  return [{ locale: 'en' }, { locale: 'ja' }];
-}
+type LocaleParams = Promise<{ locale: 'en' | 'ja' }>;
 
-export default function LocaleLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default async function LocaleLayout(
+  { children, params }: { children: React.ReactNode; params: LocaleParams }
+) {
+  const { locale } = await params; // ★ 必ず await
+
+  return (
+    <html lang={locale}>
+      <body>{children}</body>
+    </html>
+  );
 }

@@ -1,15 +1,11 @@
-// src/app/[locale]/page.tsx
-export const dynamicParams = false;
-export function generateStaticParams() {
-  // routing.ts に合わせて列挙
-  return [{ locale: "en" }, { locale: "ja" }];
-}
+type LocaleParams = Promise<{ locale: 'en' | 'ja' }>;
 
-export default function Home() {
+export default async function Home({ params }: { params: LocaleParams }) {
+  const { locale } = await params; // ★ 必ず await
   return (
-    <main>
-      <h1>OK: locale page</h1>
-      <p>This is /[locale] page.</p>
-    </main>
+    <div>
+      <h1>Please access each site from the button on the top left</h1>
+      <p>Current locale: {locale}</p>
+    </div>
   );
 }

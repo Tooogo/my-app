@@ -11,9 +11,9 @@ config:
 
   phases:
     # 1) ふつうの利用（緩やかに上げる）
-    - duration: 10
-      arrivalRate: 0.5
-      rampTo: 0.5   
+    - duration: 5
+      arrivalRate: 1
+      rampTo: 1
       name: Normal ramp
 
 scenarios:
@@ -24,3 +24,4 @@ scenarios:
           headers:
             X-Req-Id: {{ $randomString() }}
       - think: 2
+
