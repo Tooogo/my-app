@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { edgeLogger } from '@/lib/logger.edge';
 
 export default async function NotFoundInLocale() {
+  console.log('Rendering NotFoundInLocale page');
   const h = await headers();
 
   // 内部プリフェッチ/データ要求は除外
