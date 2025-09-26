@@ -12,3 +12,8 @@ export interface LogoutResult {
   status: LogoutStatus;
   redirectTo: string;
 }
+
+export enum AuthStatus {
+  authenticated = "authenticated",
+  unauthenticated = "unauthenticated"
+}

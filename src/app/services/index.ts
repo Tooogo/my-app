@@ -9,6 +9,7 @@ import argon2 from 'argon2';
 import { createSession } from "@/lib/session/session";
 import { getSession } from "@/lib/session/getSession";
 import { UserRole } from "@/types/auth";
+import { edgeLogger } from "@/lib/logger.edge";
 
 function getDatabase() {
   return client.db(DATABASE);
@@ -72,30 +73,54 @@ export async function Authenticator(data: AdminProfile): Promise<"OK" | "Invalid
   const collection = getAdminCollection();
   const user = await collection.findOne({ email });
 
-  console.log("Login attempt:", { email, pass }); // デバッグ用
-  console.log("User found in DB:", user); // デバッグ用
-
   if (!user || !user.pass) {
     console.log("Authentication failed: Invalid credentials"); // デバッグ用
+    await edgeLogger('Auth Invalid Credentials', {
+      status: 401,
+      email: email,
+      reason: 'user_not_found_or_no_pass',
+      src: 'Authenticator',
+    });
     return "Invalid credentials";
   }
 
   // ハッシュ化されたパスワードと比較
   const isValid = await argon2.verify(user.pass, pass);
   if (!isValid) {
-    console.log("Authentication failed: Invalid credentials"); // デバッグ用
+    console.log("Authentication failed: Invalid credentials");
+    await edgeLogger('Auth Invalid Credentials', {
+      status: 401,
+      email: email,
+      reason: 'bad_password',
+      src: 'Authenticator',
+    });
     return "Invalid credentials";
   }
 
   if (!user.role) {
-  console.log("Authentication failed: Missing user role");
-  return "Invalid credentials";
+    console.log("Authentication failed: Missing user role");
+    await edgeLogger('Auth Invalid Credentials', {
+        status: 401, // 403にすると“存在は正しい”示唆になるので基本は401で統一
+        email: email,
+        reason: 'missing_role',
+        src: 'Authenticator',
+      });
+    return "Invalid credentials";
   }
 
   await createSession(user._id.toString(), user.role);
+
   console.log("Authentication successful: OK");
+  await edgeLogger('Auth OK', {
+    status: 200,
+    email: email,
+    role: user.role,
+    src: 'Authenticator',
+  });
+  
   return "OK";
 }
+
 
 export async function RegisterAdminUser(data: AdminProfile): Promise<{ insertedId: string }> {
   const { username, email, pass } = data;

@@ -2,12 +2,14 @@
 
 import { useRouter } from 'next/navigation';
 import { logoutAdminUser } from "../actions/userActions";
+import { logger } from "@/lib/logger";
 
 export default function LogoutButton() {
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
+      logger.info("ログアウト処理を開始しました", { action: "logout" });
       const { status, redirectTo } = await logoutAdminUser();
 
       if (status === "OK") {

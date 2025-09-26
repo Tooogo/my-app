@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import HomePage from '@/app/login/page'; // HomePage が定義されているファイル
+import HomePage from '@/app/[locale]/login/page'; // HomePage が定義されているファイル
 import '@testing-library/jest-dom';
 
 // AdminComponent（ParentComponent）をモック
